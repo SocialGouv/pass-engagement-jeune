@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - skeleton
 
 jobs:
   build_and_test:
@@ -17,6 +16,8 @@ jobs:
     defaults:
       run:
         working-directory: backend
+    env:
+      POSTGRESQL_ADDON_URI: ${{ secrets.POSTGRESQL_ADDON_URI }}
     steps:
       - uses: actions/setup-node@v1
         with:
