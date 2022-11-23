@@ -28,6 +28,6 @@ describe('authentication', () => {
       
       assert.ok(accessToken, 'Created access token for user');
       assert.ok(user, 'Includes user in authentication data');
-    });
+    }).timeout(20000);
   });
 });

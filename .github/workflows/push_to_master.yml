@@ -1,4 +1,4 @@
-name: Pass Engagement Jeune integration
+name: Push to master
 
 on:
   push:
@@ -19,12 +19,12 @@ jobs:
     env:
       POSTGRESQL_ADDON_URI: ${{ secrets.POSTGRESQL_ADDON_URI }}
     steps:
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v3
         with:
           node-version: '${{ matrix.node }}'
       - uses: actions/checkout@v3
       - name: 'Cache node_modules'
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-v${{ matrix.node }}-${{ hashFiles('**/package-lock.json') }}
