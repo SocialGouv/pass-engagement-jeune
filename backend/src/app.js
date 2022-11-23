@@ -9,12 +9,11 @@ const feathers = require('@feathersjs/feathers');
 const configuration = require('@feathersjs/configuration');
 const express = require('@feathersjs/express');
 
-
-
 const middleware = require('./middleware');
 const services = require('./services');
 const appHooks = require('./app.hooks');
 const channels = require('./channels');
+const pages = require('./pages');
 
 const authentication = require('./authentication');
 
@@ -25,9 +24,11 @@ const app = express(feathers());
 // Load app configuration
 app.configure(configuration());
 // Enable security, CORS, compression, favicon and body parsing
-app.use(helmet({
-  contentSecurityPolicy: false
-}));
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+  })
+);
 app.use(cors());
 app.use(compress());
 app.use(express.json());
@@ -39,9 +40,7 @@ app.use('/', express.static(app.get('public')));
 // Set up Plugins and providers
 app.configure(express.rest());
 
-
 app.configure(sequelize);
-
 
 // Configure other middleware (see `middleware/index.js`)
 app.configure(middleware);
@@ -53,19 +52,12 @@ app.configure(channels);
 
 app.set('view engine', 'pug');
 
-app.get('/partenaires-pej', function(req, res, next){
-  app.service('partenaires')
-    .find({ query: {$sort: { updatedAt: -1 } } })
-    .then(result => res.render('partenaires-pej', {partenaires: result.data }))
-    .catch(next);
-});
+pages(app);
 
 // Configure a middleware for 404s and the error handler
 app.use(express.notFound());
 app.use(express.errorHandler({ logger }));
 
 app.hooks(appHooks);
-
-
 
 module.exports = app;
