@@ -29,6 +29,11 @@ describe('Feathers application tests', () => {
     assert.ok(data.indexOf('<html lang="fr">') !== -1);
   });
 
+  it('starts and shows partenaires page', async () => {
+    const { data } = await axios.get(getUrl('/partenaires-pej'));
+    assert.ok(data.indexOf('<h1>Partenaires PEJ</h1>') !== -1);
+  });
+
   describe('404', function() {
     it('shows a 404 HTML page', async () => {
       try {

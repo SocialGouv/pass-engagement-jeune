@@ -51,10 +51,21 @@ app.configure(services);
 // Set up event channels (see channels.js)
 app.configure(channels);
 
+app.set('view engine', 'pug');
+
+app.get('/partenaires-pej', function(req, res, next){
+  app.service('partenaires')
+    .find({ query: {$sort: { updatedAt: -1 } } })
+    .then(result => res.render('partenaires-pej', {partenaires: result.data }))
+    .catch(next);
+});
+
 // Configure a middleware for 404s and the error handler
 app.use(express.notFound());
 app.use(express.errorHandler({ logger }));
 
 app.hooks(appHooks);
+
+
 
 module.exports = app;
