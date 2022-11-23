@@ -1,0 +1,35 @@
+name: Pull request
+
+on:
+  push:
+    branches:
+
+jobs:
+  build_and_test:
+    name: 'Node.js v${{ matrix.node }}'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node:
+          - 18
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      POSTGRESQL_ADDON_URI: ${{ secrets.POSTGRESQL_ADDON_URI }}
+    steps:
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '${{ matrix.node }}'
+      - uses: actions/checkout@v3
+      - name: 'Cache node_modules'
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-v${{ matrix.node }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-v${{ matrix.node }}-
+      - name: Install Dependencies
+        run: yarn install
+      - name: Run All Node.js Tests
+        run: yarn run test

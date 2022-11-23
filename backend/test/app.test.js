@@ -26,7 +26,7 @@ describe('Feathers application tests', () => {
   it('starts and shows the index page', async () => {
     const { data } = await axios.get(getUrl());
 
-    assert.ok(data.indexOf('<html lang="en">') !== -1);
+    assert.ok(data.indexOf('<html lang="fr">') !== -1);
   });
 
   describe('404', function() {
