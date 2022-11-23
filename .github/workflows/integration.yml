@@ -1,0 +1,59 @@
+name: Pass Engagement Jeune integration
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build_and_test:
+    name: 'Node.js v${{ matrix.node }}'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node:
+          - 18
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      POSTGRESQL_ADDON_URI: ${{ secrets.POSTGRESQL_ADDON_URI }}
+    steps:
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '${{ matrix.node }}'
+      - uses: actions/checkout@v3
+      - name: 'Cache node_modules'
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-v${{ matrix.node }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-v${{ matrix.node }}-
+      - name: Install Dependencies
+        run: yarn install
+      - name: Run All Node.js Tests
+        run: yarn run test
+
+  deploy:
+    name: Deploy to Clever Cloud
+    runs-on: ubuntu-latest
+    needs: build_and_test
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      # This action requires an unshallow working copy,
+      # so the following prerequisites are necessary:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      # Deploy your application
+      - uses: 47ng/actions-clever-cloud@v1.3.1
+        with:
+          appID: ${{ secrets.CLEVER_APP_ID }}
+          force: true
+        env:
+          CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
+          CLEVER_SECRET: ${{ secrets.CLEVER_SECRET }}

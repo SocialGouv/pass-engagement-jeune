@@ -1,0 +1,3 @@
+{ 
+    "postgres": "POSTGRESQL_ADDON_URI"
+}
