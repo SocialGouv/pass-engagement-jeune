@@ -1,0 +1,7 @@
+h1 Partenaires PEJ
+
+ul
+  each partenaire in partenaires
+    li
+      a(href=partenaire.url) #{partenaire.name}
+      p= partenaire.description
