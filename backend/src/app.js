@@ -13,6 +13,7 @@ const middleware = require('./middleware');
 const services = require('./services');
 const appHooks = require('./app.hooks');
 const channels = require('./channels');
+const pages = require('./pages');
 
 const authentication = require('./authentication');
 
@@ -58,15 +59,7 @@ app.configure(channels);
 
 app.set('view engine', 'pug');
 
-app.get('/partenaires-pej', function (req, res, next) {
-  app
-    .service('partenaires')
-    .find({ query: { $sort: { updatedAt: -1 } } })
-    .then((result) =>
-      res.render('partenaires-pej', { partenaires: result.data })
-    )
-    .catch(next);
-});
+pages(app);
 
 // Configure a middleware for 404s and the error handler
 app.use(express.notFound());
