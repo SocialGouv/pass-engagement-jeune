@@ -3,5 +3,6 @@ h1 Partenaires PEJ
 ul
   each partenaire in partenaires
     li
+      img(src="http://cellar-fr-north-hds-c1.services.clever-cloud.com/images-pej/prestataires/" + partenaire.id + ".png" width="200px")
       a(href=partenaire.url) #{partenaire.name}
       p= partenaire.description
