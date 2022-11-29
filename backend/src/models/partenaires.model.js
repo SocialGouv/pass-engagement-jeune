@@ -5,26 +5,35 @@ const DataTypes = Sequelize.DataTypes;
 
 module.exports = function (app) {
   const sequelizeClient = app.get('sequelizeClient');
-  const partenaires = sequelizeClient.define('partenaires', {
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false
+  const partenaires = sequelizeClient.define(
+    'partenaires',
+    {
+      id: {
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        primaryKey: true,
+      },
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      description: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+      },
+      url: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+      },
     },
-    description: {
-      type: DataTypes.TEXT,
-      allowNull: false
-    },
-    url: {
-      type: DataTypes.TEXT,
-      allowNull: false
+    {
+      hooks: {
+        beforeCount(options) {
+          options.raw = true;
+        },
+      },
     }
-  }, {
-    hooks: {
-      beforeCount(options) {
-        options.raw = true;
-      }
-    }
-  });
+  );
 
   // eslint-disable-next-line no-unused-vars
   partenaires.associate = function (models) {

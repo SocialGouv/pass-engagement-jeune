@@ -27,9 +27,16 @@ app.configure(configuration());
 app.use(
   helmet({
     contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false,
+    crossOriginOpenerPolicy: false,
+    crossOriginResourcePolicy: false,
   })
 );
-app.use(cors());
+app.use(
+  cors({
+    origin: '*',
+  })
+);
 app.use(compress());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
