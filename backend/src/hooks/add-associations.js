@@ -8,9 +8,10 @@ module.exports = function (options = {}) {
     //	Reasign in case we created these properties
     sequelize.include = include.concat(
       options.models.map((model) => {
-        const newModel = { ...model };
+        const newModel = { ...model, limit: 10 };
 
         newModel.model = context.app.services[model.model].Model;
+
         return newModel;
       })
     );

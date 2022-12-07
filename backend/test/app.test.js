@@ -1,16 +1,8 @@
 const assert = require('assert').strict;
 const axios = require('axios');
-const url = require('url');
 const app = require('../src/app');
 
-const port = app.get('port') || 8998;
-const getUrl = (pathname) =>
-  url.format({
-    hostname: app.get('host') || 'localhost',
-    protocol: 'http',
-    port,
-    pathname,
-  });
+const { getUrl, port } = require('./utils')(app);
 
 describe('Feathers application tests', () => {
   let server;
@@ -37,6 +29,8 @@ describe('Feathers application tests', () => {
 
   it('starts and shows the stats page', async () => {
     const { data } = await axios.get(getUrl('/stats'));
+
+    assert.ok(data.indexOf('<h4 class="fr-tile__title">2 offres</h4>') !== -1);
 
     assert.ok(
       data.indexOf('<h4 class="fr-tile__title">1 partenaires</h4>') !== -1

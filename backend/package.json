@@ -10,7 +10,7 @@
   ],
   "author": {
     "name": "Loïc Guillois",
-    "email": "contact@loicguillois.fr"
+    "email": "loic.guillois@beta.gouv.fr"
   },
   "contributors": [],
   "bugs": {},
@@ -24,10 +24,10 @@
     "yarn": ">= 0.18.0"
   },
   "scripts": {
-    "test": "yarn run lint && yarn run mocha",
+    "test": "export NODE_ENV=test && yarn run lint && yarn run mocha",
     "lint": "eslint src/. test/. --config .eslintrc.json --fix",
-    "dev": "nodemon src/",
-    "start": "node src/",
+    "dev": "export NODE_ENV=dev && nodemon src/",
+    "start": "export NODE_ENV=production && node src/",
     "mocha": "mocha test/ --recursive --exit"
   },
   "standard": {
@@ -51,6 +51,7 @@
     "cors": "^2.8.5",
     "feathers-sequelize": "^6.3.2",
     "helmet": "^6.0.0",
+    "joi": "^17.7.0",
     "pg": "^8.8.0",
     "pug": "^3.0.2",
     "sequelize": "^6.25.8",

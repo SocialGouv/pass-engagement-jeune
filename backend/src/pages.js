@@ -15,7 +15,7 @@ module.exports = function (app) {
       .find({ query: { $sort: { updatedAt: -1 } } });
 
     const offres = await app
-      .service('partenaires')
+      .service('offres')
       .find({ query: { $sort: { updatedAt: -1 } } });
 
     res.render('stats', {
