@@ -28,5 +28,11 @@
       "passwordField": "password"
     }
   },
-  "postgres": "postgres://postgres:@localhost:5432/backend"
+  "postgres": "postgres://postgres:@localhost:5432/backend",
+  "sentry": {
+    "enabled": "false",
+    "environment": "local",
+    "dsn": "https://xxx@yyy.ingest.sentry.io/zzz",
+    "traceSampleRate": "1"
+  }
 }

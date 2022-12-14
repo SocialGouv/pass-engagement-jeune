@@ -5,26 +5,55 @@ const DataTypes = Sequelize.DataTypes;
 
 module.exports = function (app) {
   const sequelizeClient = app.get('sequelizeClient');
-  const users = sequelizeClient.define('users', {
-  
-    email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true
+  const users = sequelizeClient.define(
+    'users',
+    {
+      email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+      },
+      nom: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: '',
+      },
+      prenom: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: '',
+      },
+      role: {
+        type: DataTypes.ENUM(['CEJ', 'PARTENAIRE', 'ADMIN']),
+        allowNull: false,
+        defaultValue: 'ADMIN',
+      },
+      password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      token: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: '',
+      },
+      passwordCreated: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
+      mailSentDate: {
+        type: DataTypes.DATE,
+      },
     },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-  
-  
-  }, {
-    hooks: {
-      beforeCount(options) {
-        options.raw = true;
-      }
+    {
+      hooks: {
+        beforeCount(options) {
+          options.raw = true;
+        },
+      },
     }
-  });
+  );
 
   // eslint-disable-next-line no-unused-vars
   users.associate = function (models) {
