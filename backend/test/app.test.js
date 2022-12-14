@@ -30,7 +30,7 @@ describe('Feathers application tests', () => {
   it('starts and shows the stats page', async () => {
     const { data } = await axios.get(getUrl('/stats'));
 
-    assert.ok(data.indexOf('<h4 class="fr-tile__title">2 offres</h4>') !== -1);
+    assert.ok(data.indexOf('<h4 class="fr-tile__title">3 offres</h4>') !== -1);
 
     assert.ok(
       data.indexOf('<h4 class="fr-tile__title">1 partenaires</h4>') !== -1
