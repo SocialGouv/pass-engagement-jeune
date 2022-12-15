@@ -2,7 +2,7 @@ const assert = require('assert').strict;
 const axios = require('axios');
 const app = require('../src/app');
 
-const { getUrl, port } = require('./utils')(app);
+const { getUrl, port } = require('../src/utils')(app);
 
 describe('Feathers application tests', () => {
   let server;

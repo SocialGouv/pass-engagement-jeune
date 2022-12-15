@@ -4,5 +4,18 @@
     "environment": "SENTRY_ENVIRONMENT",
     "dsn": "SENTRY_DSN",
     "traceSampleRate": "SENTRY_TRACE_SAMPLE_RATE"
+  },
+  "smtp": {
+    "host": "SMTP_HOST",
+    "port": "SMTP_PORT",
+    "secure": "SMTP_SECURE",
+    "hostname": "SMTP_HOSTNAME",
+    "user": "SMTP_USER",
+    "password": "SMTP_PASSWORD",
+    "greetingTimeout": "SMTP_GREETINGTIMEOUT",
+    "from": "SMTP_FROM",
+    "replyTo": "SMTP_REPLYTO",
+    "logger": "SMTP_LOGGER",
+    "debug": "SMTP_DEBUG"
   }
 }

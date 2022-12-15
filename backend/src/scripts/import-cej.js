@@ -32,7 +32,7 @@ execute(__filename, async ({ feathers, logger }) => {
 
     const userAccount = await feathers
       .service('users')
-      .find({ name: cej.email, role: 'cej' });
+      .find({ query: { name: cej.email, role: 'cej' } });
 
     if (userAccount === null) {
       await feathers.service('users').create({

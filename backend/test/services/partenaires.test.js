@@ -1,7 +1,7 @@
 const assert = require('assert');
 const app = require('../../src/app');
 const axios = require('axios');
-const { getUrl } = require('../utils')(app);
+const { getUrl } = require('../../src/utils')(app);
 
 describe('\'partenaires\' service', () => {
   const SAMPLE_PARTENAIRES = {

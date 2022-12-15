@@ -3,6 +3,8 @@ const favicon = require('serve-favicon');
 const compress = require('compression');
 const helmet = require('helmet');
 const cors = require('cors');
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
 const logger = require('./logger');
 
 const feathers = require('@feathersjs/feathers');
@@ -22,7 +24,8 @@ const sequelize = require('./sequelize');
 const app = express(feathers());
 
 // Load app configuration
-app.configure(configuration());
+const conf = configuration();
+app.configure(conf);
 // Enable security, CORS, compression, favicon and body parsing
 app.use(
   helmet({
@@ -46,6 +49,18 @@ app.use('/', express.static(app.get('public')));
 
 // Set up Plugins and providers
 app.configure(express.rest());
+const ONE_DAY = 1000 * 60 * 60 * 24;
+app.use(
+  session({
+    secret: conf().authentication.session.secret,
+    saveUninitialized: true,
+    cookie: { maxAge: ONE_DAY },
+    resave: false,
+  })
+);
+
+// cookie parser middleware
+app.use(cookieParser());
 
 app.configure(sequelize);
 

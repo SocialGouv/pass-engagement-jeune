@@ -2,7 +2,7 @@ const assert = require('assert');
 const app = require('../../src/app');
 const axios = require('axios');
 
-const { getUrl, port } = require('../utils')(app);
+const { getUrl, port } = require('../../src/utils')(app);
 
 describe('\'offres\' service', () => {
   let server;
