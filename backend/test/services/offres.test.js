@@ -18,7 +18,6 @@ describe('\'offres\' service', () => {
     location: null,
     modaliteUtilisation: 'COUPON_REDUCTION',
     bonPlan: false,
-    partenaireId: '522cde94-063a-43be-b441-b09428a8e012',
   };
 
   before(function (done) {
@@ -52,9 +51,15 @@ describe('\'offres\' service', () => {
         ...userInfo,
       });
 
-      const response = await axios.post(getUrl('/offres'), SAMPLE_OFFRES, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
+      const response = await axios.post(
+        getUrl('/offres'),
+        Object.assign(SAMPLE_OFFRES, {
+          partenaireId: app.get('bootstraped_data').partenaire.id,
+        }),
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
       assert.equal(response.status, 201);
 
       // clean up

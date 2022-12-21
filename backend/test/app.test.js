@@ -4,12 +4,18 @@ const app = require('../src/app');
 
 const { getUrl, port } = require('../src/utils')(app);
 
+const { cleanUp, bootstrap } = require('./bootstrap');
+
 describe('Feathers application tests', () => {
   let server;
 
   before(function (done) {
-    server = app.listen(port);
-    server.once('listening', () => done());
+    cleanUp(app.get('sequelizeClient'));
+    bootstrap(app);
+    setTimeout(() => {
+      server = app.listen(port);
+      server.once('listening', () => done());
+    }, 1000);
   });
 
   after(function (done) {

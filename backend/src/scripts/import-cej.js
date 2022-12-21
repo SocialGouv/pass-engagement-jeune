@@ -32,15 +32,15 @@ execute(__filename, async ({ feathers, logger }) => {
 
     const userAccount = await feathers
       .service('users')
-      .find({ query: { name: cej.email, role: 'cej' } });
+      .find({ query: { email: cej.email, role: 'CEJ' } });
 
     if (userAccount === null) {
       await feathers.service('users').create({
-        name: cej.email,
+        email: cej.email,
         prenom: cej.prenom,
         nom: cej.nom,
         password: uuidv4(), // random password (required to create user)
-        role: 'cej',
+        role: 'CEJ',
         token: uuidv4(),
         mailSentDate: null, // on stock la date du dernier envoi de mail de création pour le mécanisme de relance
         passwordCreated: false,
