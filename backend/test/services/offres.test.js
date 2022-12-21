@@ -1,6 +1,7 @@
 const assert = require('assert');
 const app = require('../../src/app');
 const axios = require('axios');
+const Sequelize = require('sequelize');
 
 const { USER_CEJ, USER_ADMIN } = require('../data/users');
 
@@ -51,10 +52,16 @@ describe('\'offres\' service', () => {
         ...userInfo,
       });
 
+      const partenaires = await app
+        .get('sequelizeClient')
+        .query('SELECT * FROM partenaires', {
+          type: Sequelize.QueryTypes.SELECT,
+        });
+
       const response = await axios.post(
         getUrl('/offres'),
         Object.assign(SAMPLE_OFFRES, {
-          partenaireId: app.get('bootstraped_data').partenaire.id,
+          partenaireId: partenaires[0].id,
         }),
         {
           headers: { Authorization: `Bearer ${accessToken}` },

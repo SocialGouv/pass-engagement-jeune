@@ -24,11 +24,12 @@
     "yarn": ">= 0.18.0"
   },
   "scripts": {
-    "test": "export NODE_ENV=test && yarn run lint && yarn run mocha",
+    "test": "export NODE_ENV=test && yarn run lint && yarn run bootstrap && yarn run mocha",
     "lint": "eslint src/. test/. --config .eslintrc.json --fix",
     "dev": "export NODE_ENV=dev && nodemon src/",
     "start": "export NODE_ENV=production && node src/",
-    "mocha": "mocha test/ --recursive --exit"
+    "mocha": "mocha test/**/*.test.js --recursive --exit",
+    "bootstrap": "node test/bootstrap.js"
   },
   "standard": {
     "env": [

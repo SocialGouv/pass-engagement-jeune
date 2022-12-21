@@ -1,21 +1,15 @@
 const assert = require('assert').strict;
 const axios = require('axios');
-const app = require('../src/app');
+const app = require('../../src/app');
 
-const { getUrl, port } = require('../src/utils')(app);
-
-const { cleanUp, bootstrap } = require('./bootstrap');
+const { getUrl, port } = require('../../src/utils')(app);
 
 describe('Feathers application tests', () => {
   let server;
 
   before(function (done) {
-    cleanUp(app.get('sequelizeClient'));
-    bootstrap(app);
-    setTimeout(() => {
-      server = app.listen(port);
-      server.once('listening', () => done());
-    }, 1000);
+    server = app.listen(port);
+    server.once('listening', () => done());
   });
 
   after(function (done) {

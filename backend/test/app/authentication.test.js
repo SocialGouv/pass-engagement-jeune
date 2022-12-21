@@ -1,7 +1,7 @@
 const assert = require('assert');
-const app = require('../src/app');
+const app = require('../../src/app');
 
-const { USER_ADMIN } = require('./data/users');
+const { USER_ADMIN } = require('../data/users');
 
 describe('authentication', () => {
   it('registered the authentication service', () => {
