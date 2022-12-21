@@ -22,11 +22,6 @@ describe('Feathers application tests', () => {
     assert.ok(data.indexOf('<html lang="fr">') !== -1);
   });
 
-  it('starts and shows partenaires page', async () => {
-    const { data } = await axios.get(getUrl('/partenaires-pej'));
-    assert.ok(data.indexOf('<h1>Partenaires PEJ</h1>') !== -1);
-  }).timeout(20000);
-
   it('starts and shows the stats page', async () => {
     const { data } = await axios.get(getUrl('/stats'));
 

@@ -3,6 +3,8 @@ const app = require('../../src/app');
 const axios = require('axios');
 const { getUrl } = require('../../src/utils')(app);
 
+const { USER_CEJ, USER_ADMIN } = require('../data/users');
+
 describe('\'users\' service', () => {
   it('registered the service', () => {
     const service = app.service('users');
@@ -26,15 +28,12 @@ describe('\'users\' service', () => {
       } catch (error) {
         const { response } = error;
 
-        assert.equal(response.status, 401);
+        assert.equal(response.status, 403);
       }
     });
 
     it('Should list users if authenticated as an \'ADMIN\' user', async () => {
-      const userInfo = {
-        email: 'passengagementjeune@beta.gouv.fr',
-        password: 'supersecret',
-      };
+      const userInfo = USER_ADMIN;
 
       const { accessToken } = await app.service('authentication').create({
         strategy: 'local',
@@ -49,10 +48,7 @@ describe('\'users\' service', () => {
 
     it('Should fail to list users if authenticated as an \'CEJ\' user', async () => {
       try {
-        const userInfo = {
-          email: 'suzette.apidet@email.fr',
-          password: 'supercej',
-        };
+        const userInfo = USER_CEJ;
 
         const { accessToken } = await app.service('authentication').create({
           strategy: 'local',
@@ -69,5 +65,34 @@ describe('\'users\' service', () => {
         assert.equal(response.status, 403);
       }
     });
+
+    it('Should fail to starts and shows partenaires page if not authenticated', async () => {
+      try {
+        await axios.get(getUrl('/partenaires-pej'));
+      } catch (error) {
+        const { response } = error;
+
+        assert.equal(response.status, 403);
+      }
+    }).timeout(20000);
+
+    it('Should starts and shows partenaires page if authenticated as an \'CEJ\' user', async () => {
+      try {
+        const userInfo = USER_CEJ;
+
+        const { accessToken } = await app.service('authentication').create({
+          strategy: 'local',
+          ...userInfo,
+        });
+
+        const { data } = await axios.get(getUrl('/partenaires-pej'), {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        assert.ok(data.indexOf('<h1>Partenaires PEJ</h1>') !== -1);
+      } catch (error) {
+        const { response } = error;
+        assert.equal(response.status, 403);
+      }
+    }).timeout(20000);
   });
 });

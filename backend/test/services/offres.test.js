@@ -2,6 +2,8 @@ const assert = require('assert');
 const app = require('../../src/app');
 const axios = require('axios');
 
+const { USER_CEJ, USER_ADMIN } = require('../data/users');
+
 const { getUrl, port } = require('../../src/utils')(app);
 
 describe('\'offres\' service', () => {
@@ -16,7 +18,7 @@ describe('\'offres\' service', () => {
     location: null,
     modaliteUtilisation: 'COUPON_REDUCTION',
     bonPlan: false,
-    partenaireId: 'cdc428e3-31d1-4ba9-b9a0-76373281ddb8',
+    partenaireId: '522cde94-063a-43be-b441-b09428a8e012',
   };
 
   before(function (done) {
@@ -43,10 +45,7 @@ describe('\'offres\' service', () => {
     });
 
     it('Should create \'offres\' if authenticated as an \'ADMIN\' user', async () => {
-      const userInfo = {
-        email: 'passengagementjeune@beta.gouv.fr',
-        password: 'supersecret',
-      };
+      const userInfo = USER_ADMIN;
 
       const { accessToken } = await app.service('authentication').create({
         strategy: 'local',
@@ -64,10 +63,7 @@ describe('\'offres\' service', () => {
 
     it('Should fail to create an \'offres\' if authenticated as an \'CEJ\' user', async () => {
       try {
-        const userInfo = {
-          email: 'suzette.apidet@email.fr',
-          password: 'supercej',
-        };
+        const userInfo = USER_CEJ;
         const { accessToken } = await app.service('authentication').create({
           strategy: 'local',
           ...userInfo,
