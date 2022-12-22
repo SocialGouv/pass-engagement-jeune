@@ -49,6 +49,7 @@
     "@feathersjs/transport-commons": "^4.5.15",
     "@gouvfr/dsfr": "^1.8.4",
     "@sentry/node": "^7.24.2",
+    "axios-cookiejar-support": "^4.0.3",
     "commander": "^9.4.1",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
@@ -60,6 +61,7 @@
     "feathers-sequelize": "^6.3.2",
     "helmet": "^6.0.0",
     "joi": "^17.7.0",
+    "joi-password": "^4.0.0",
     "mjml": "^4.13.0",
     "nodemailer": "^6.8.0",
     "nodemailer-html-to-text": "^3.2.0",
@@ -67,6 +69,7 @@
     "pug": "^3.0.2",
     "sequelize": "^6.25.8",
     "serve-favicon": "^2.5.0",
+    "tough-cookie": "^4.1.2",
     "uuidv4": "^6.2.13",
     "winston": "^3.0.0"
   },

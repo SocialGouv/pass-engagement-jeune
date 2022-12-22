@@ -2,6 +2,8 @@
 const { Cej } = require('./cej.class');
 const hooks = require('./cej.hooks');
 const Joi = require('joi');
+const { joiPasswordExtendCore } = require('joi-password');
+const joiPassword = Joi.extend(joiPasswordExtendCore);
 
 module.exports = function (app) {
   const options = {
@@ -36,7 +38,15 @@ module.exports = function (app) {
       const cej = result.data[0];
       const password = req.body.password;
 
-      const complexityRule = Joi.string().min(8).alphanum().required();
+      const complexityRule = joiPassword
+        .string()
+        .min(8)
+        .minOfSpecialCharacters(1)
+        .minOfLowercase(1)
+        .minOfUppercase(1)
+        .minOfNumeric(1)
+        .noWhiteSpaces()
+        .required();
 
       const validation = complexityRule.validate(password);
       if (validation.error) {
