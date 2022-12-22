@@ -1,6 +1,10 @@
 const bcrypt = require('bcryptjs');
 
 module.exports = function (app) {
+  app.get('/', async (req, res) => {
+    res.render('index');
+  });
+
   app.get('/stats', async (req, res) => {
     const partenaires = await app
       .service('partenaires')
