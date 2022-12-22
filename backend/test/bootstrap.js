@@ -1,7 +1,11 @@
 const Sequelize = require('sequelize');
 const { v4: uuidv4 } = require('uuid');
 
-const { USER_CEJ, USER_ADMIN } = require('./data/users');
+const {
+  USER_CEJ,
+  USER_CEJ_PASSWORD_FORGOTTEN,
+  USER_ADMIN,
+} = require('./data/users');
 
 const cleanUp = async (db) => {
   await db.query('DELETE FROM users', { type: Sequelize.QueryTypes.DELETE });
@@ -18,6 +22,18 @@ const bootstrap = async (app) => {
       role: 'CEJ',
       token: uuidv4(),
       mailSentDate: null,
+      passwordCreated: true,
+      createdAt: new Date(),
+    })
+  );
+
+  await app.service('users').create(
+    Object.assign(USER_CEJ_PASSWORD_FORGOTTEN, {
+      prenom: 'Jimmy',
+      nom: 'Forgotten',
+      role: 'CEJ',
+      token: uuidv4(),
+      mailSentDate: new Date(),
       passwordCreated: true,
       createdAt: new Date(),
     })
