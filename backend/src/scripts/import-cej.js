@@ -56,5 +56,4 @@ execute(__filename, async ({ feathers, logger, exit }) => {
       exit();
     }
   });
-  exit();
 });

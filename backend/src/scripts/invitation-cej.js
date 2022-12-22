@@ -5,11 +5,11 @@ const { execute } = require('./utils');
 
 const bienvenueCompteCEJ = require('../emails/cej/bienvenueCompteCEJ');
 
-execute(__filename, async ({ feathers, logger, mailer }) => {
+execute(__filename, async ({ feathers, logger, mailer, exit }) => {
   logger.info('Invitation des jeunes CEJ');
   const result = await feathers
     .service('users')
-    .find({ query: { role: 'cej', mailSentDate: null } });
+    .find({ query: { role: 'CEJ', mailSentDate: null } });
 
   const email = bienvenueCompteCEJ(mailer);
 
@@ -23,5 +23,6 @@ execute(__filename, async ({ feathers, logger, mailer }) => {
     logger.info(
       `L'invitation pour le compte CEJ a été envoyée pour ${cej.email}`
     );
+    exit();
   });
 });

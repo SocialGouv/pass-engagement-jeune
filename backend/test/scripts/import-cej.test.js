@@ -8,7 +8,15 @@ describe('scripts', () => {
     before(async () => {
       await app
         .get('sequelizeClient')
-        .query("DELETE FROM users where email='justine.badet@email.fr'", {
+        .query('DELETE FROM users where email=\'justine.badet@email.fr\'', {
+          type: Sequelize.QueryTypes.DELETE,
+        });
+    });
+
+    after(async () => {
+      await app
+        .get('sequelizeClient')
+        .query('DELETE FROM users where email=\'justine.badet@email.fr\'', {
           type: Sequelize.QueryTypes.DELETE,
         });
     });
@@ -37,25 +45,20 @@ describe('scripts', () => {
     }).timeout('20000');
 
     it('should fail to import CEJ from CSV file if already imported', async () => {
-      let users = await app
-        .service('users')
-        .find({ query: { email: 'justine.badet@email.fr', role: 'CEJ' } });
-
-      assert.equal(users.total, 1);
-
-      const r = execSync(
+      execSync(
         'node src/scripts/import-cej.js --csv test/data/test.csv'
       );
+      const r = execSync('node src/scripts/import-cej.js --csv test/data/test.csv');
 
-      assert.equal(
+      assert.notEqual(
         r
           .toString()
           .split('\n')[4]
           .indexOf('Le compte CEJ a déjà été créé pour justine.badet@email.fr'),
-        91
+        -1
       );
 
-      users = await app
+      let users = await app
         .service('users')
         .find({ query: { email: 'justine.badet@email.fr', role: 'CEJ' } });
       assert.equal(users.total, 1);
