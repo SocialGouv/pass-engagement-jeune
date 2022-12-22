@@ -52,6 +52,20 @@ module.exports = function (app) {
     }
   });
 
+  app.get('/partenaires-pej', function (req, res, next) {
+    if (req.session.userId) {
+      app
+        .service('partenaires')
+        .find({ query: { $sort: { updatedAt: -1 } } })
+        .then((result) =>
+          res.render('partenaires-pej', { partenaires: result.data })
+        )
+        .catch(next);
+    } else {
+      res.sendStatus(403);
+    }
+  });
+
   // Get our initialized service so that we can register hooks
   const service = app.service('cej');
 

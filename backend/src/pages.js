@@ -1,21 +1,6 @@
 const bcrypt = require('bcryptjs');
 
 module.exports = function (app) {
-  // TODO déplacer vers service cej pour authentification
-  app.get('/partenaires-pej', function (req, res, next) {
-    if (req.session.userId) {
-      app
-        .service('partenaires')
-        .find({ query: { $sort: { updatedAt: -1 } } })
-        .then((result) =>
-          res.render('partenaires-pej', { partenaires: result.data })
-        )
-        .catch(next);
-    } else {
-      res.sendStatus(403);
-    }
-  });
-
   app.get('/stats', async (req, res) => {
     const partenaires = await app
       .service('partenaires')
