@@ -1,5 +1,7 @@
 const assert = require('assert');
-const app = require('../src/app');
+const app = require('../../src/app');
+
+const { USER_ADMIN } = require('../data/users');
 
 describe('authentication', () => {
   it('registered the authentication service', () => {
@@ -7,10 +9,7 @@ describe('authentication', () => {
   });
 
   describe('local strategy', () => {
-    const userInfo = {
-      email: 'passengagementjeune@beta.gouv.fr',
-      password: 'supersecret',
-    };
+    const userInfo = USER_ADMIN;
 
     before(async () => {
       try {

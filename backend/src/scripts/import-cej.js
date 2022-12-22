@@ -16,7 +16,7 @@ program.option('-c, --csv <path>', 'CSV file path');
 
 program.parse(process.argv);
 
-execute(__filename, async ({ feathers, logger }) => {
+execute(__filename, async ({ feathers, logger, exit }) => {
   logger.info('Import des jeunes CEJ');
 
   const csvPath = program.opts().csv;
@@ -30,17 +30,17 @@ execute(__filename, async ({ feathers, logger }) => {
   cejList.forEach(async (cej) => {
     logger.info(JSON.stringify(cej));
 
-    const userAccount = await feathers
+    const users = await feathers
       .service('users')
-      .find({ name: cej.email, role: 'cej' });
+      .find({ query: { email: cej.email, role: 'CEJ' } });
 
-    if (userAccount === null) {
+    if (users.total == 0) {
       await feathers.service('users').create({
-        name: cej.email,
+        email: cej.email,
         prenom: cej.prenom,
         nom: cej.nom,
         password: uuidv4(), // random password (required to create user)
-        role: 'cej',
+        role: 'CEJ',
         token: uuidv4(),
         mailSentDate: null, // on stock la date du dernier envoi de mail de création pour le mécanisme de relance
         passwordCreated: false,
@@ -48,11 +48,12 @@ execute(__filename, async ({ feathers, logger }) => {
       });
     } else {
       let createdAt = dayjs
-        .utc(userAccount.createdAt.getTime())
-        .format('DD/MM/AAAA à HH:mm:ss.SSS');
+        .utc(users.data[0].createdAt.getTime())
+        .format('DD/MM/YYYY à HH:mm:ss.SSS');
       logger.error(
         `Le compte CEJ a déjà été créé pour ${cej.email} le ${createdAt}`
       );
+      exit();
     }
   });
 });

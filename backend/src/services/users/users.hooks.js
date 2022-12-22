@@ -6,7 +6,8 @@ const { hashPassword, protect } =
 
 module.exports = {
   before: {
-    all: [
+    all: [],
+    find: [
       authenticate('jwt'),
       checkPermissions({
         roles: ['ADMIN'],
@@ -14,12 +15,48 @@ module.exports = {
         entity: 'user',
       }),
     ],
-    find: [],
-    get: [authenticate('jwt')],
-    create: [hashPassword('password')],
-    update: [hashPassword('password')],
-    patch: [hashPassword('password')],
-    remove: [],
+    get: [
+      authenticate('jwt'),
+      checkPermissions({
+        roles: ['ADMIN'],
+        field: 'role',
+        entity: 'user',
+      }),
+    ],
+    create: [
+      hashPassword('password'),
+      checkPermissions({
+        roles: ['ADMIN'],
+        field: 'role',
+        entity: 'user',
+      }),
+    ],
+    update: [
+      hashPassword('password'),
+      authenticate('jwt'),
+      checkPermissions({
+        roles: ['ADMIN'],
+        field: 'role',
+        entity: 'user',
+      }),
+    ],
+    patch: [
+      hashPassword('password'),
+      authenticate('jwt'),
+      checkPermissions({
+        roles: ['ADMIN'],
+        field: 'role',
+        entity: 'user',
+      }),
+    ],
+    remove: [
+      authenticate('jwt'),
+      checkPermissions({
+        roles: ['ADMIN'],
+        field: 'role',
+        entity: 'user',
+      }),
+    ],
   },
 
   after: {

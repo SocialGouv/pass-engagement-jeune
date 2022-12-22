@@ -1,7 +1,9 @@
 const assert = require('assert');
 const app = require('../../src/app');
 const axios = require('axios');
-const { getUrl } = require('../utils')(app);
+const { getUrl } = require('../../src/utils')(app);
+
+const { USER_CEJ, USER_ADMIN } = require('../data/users');
 
 describe('\'partenaires\' service', () => {
   const SAMPLE_PARTENAIRES = {
@@ -30,10 +32,7 @@ describe('\'partenaires\' service', () => {
     });
 
     it('Should create \'partenaires\' if authenticated as an \'ADMIN\' user', async () => {
-      const userInfo = {
-        email: 'passengagementjeune@beta.gouv.fr',
-        password: 'supersecret',
-      };
+      const userInfo = USER_ADMIN;
 
       const { accessToken } = await app.service('authentication').create({
         strategy: 'local',
@@ -55,10 +54,8 @@ describe('\'partenaires\' service', () => {
 
     it('Should fail to create an \'partenaires\' if authenticated as an \'CEJ\' user', async () => {
       try {
-        const userInfo = {
-          email: 'suzette.apidet@email.fr',
-          password: 'supercej',
-        };
+        const userInfo = USER_CEJ;
+
         const { accessToken } = await app.service('authentication').create({
           strategy: 'local',
           ...userInfo,

@@ -26,6 +26,9 @@
     "local": {
       "usernameField": "email",
       "passwordField": "password"
+    },
+    "session": {
+      "secret": "/KXy]7HS*y,hIihn0lPcrB[xGn=&t6"
     }
   },
   "postgres": "postgres://postgres:@localhost:5432/backend",
@@ -34,5 +37,16 @@
     "environment": "local",
     "dsn": "https://xxx@yyy.ingest.sentry.io/zzz",
     "traceSampleRate": "1"
+  },
+  "smtp": {
+    "host": "localhost",
+    "port": "1025",
+    "secure": "false",
+    "hostname": "localhost",
+    "greetingTimeout": 300000,
+    "from": "passengagementjeune@beta.gouv.fr",
+    "replyTo": "passengagementjeune@beta.gouv.fr",
+    "logger": "false",
+    "debug": "false"
   }
 }

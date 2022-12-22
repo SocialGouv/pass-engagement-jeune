@@ -1,8 +1,11 @@
 const assert = require('assert');
 const app = require('../../src/app');
 const axios = require('axios');
+const Sequelize = require('sequelize');
 
-const { getUrl, port } = require('../utils')(app);
+const { USER_CEJ, USER_ADMIN } = require('../data/users');
+
+const { getUrl, port } = require('../../src/utils')(app);
 
 describe('\'offres\' service', () => {
   let server;
@@ -16,7 +19,6 @@ describe('\'offres\' service', () => {
     location: null,
     modaliteUtilisation: 'COUPON_REDUCTION',
     bonPlan: false,
-    partenaireId: 'cdc428e3-31d1-4ba9-b9a0-76373281ddb8',
   };
 
   before(function (done) {
@@ -43,19 +45,28 @@ describe('\'offres\' service', () => {
     });
 
     it('Should create \'offres\' if authenticated as an \'ADMIN\' user', async () => {
-      const userInfo = {
-        email: 'passengagementjeune@beta.gouv.fr',
-        password: 'supersecret',
-      };
+      const userInfo = USER_ADMIN;
 
       const { accessToken } = await app.service('authentication').create({
         strategy: 'local',
         ...userInfo,
       });
 
-      const response = await axios.post(getUrl('/offres'), SAMPLE_OFFRES, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
+      const partenaires = await app
+        .get('sequelizeClient')
+        .query('SELECT * FROM partenaires', {
+          type: Sequelize.QueryTypes.SELECT,
+        });
+
+      const response = await axios.post(
+        getUrl('/offres'),
+        Object.assign(SAMPLE_OFFRES, {
+          partenaireId: partenaires[0].id,
+        }),
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
       assert.equal(response.status, 201);
 
       // clean up
@@ -64,10 +75,7 @@ describe('\'offres\' service', () => {
 
     it('Should fail to create an \'offres\' if authenticated as an \'CEJ\' user', async () => {
       try {
-        const userInfo = {
-          email: 'suzette.apidet@email.fr',
-          password: 'supercej',
-        };
+        const userInfo = USER_CEJ;
         const { accessToken } = await app.service('authentication').create({
           strategy: 'local',
           ...userInfo,

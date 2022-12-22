@@ -17,6 +17,8 @@ const authentication = require('../authentication');
 
 const sequelize = require('../sequelize');
 
+const mailer = require('../mailer');
+
 const f = feathers();
 const app = express(f);
 
@@ -86,9 +88,11 @@ module.exports = {
 
     const db = await app.get('sequelizeClient');
 
+    const m = mailer(app);
+
     let jobComponents = Object.assign(
       {},
-      { feathers: f, db, logger, exit, app, Sentry }
+      { feathers: f, db, logger, exit, app, Sentry, mailer: m }
     );
 
     try {
@@ -98,7 +102,6 @@ module.exports = {
         .utc(new Date().getTime() - launchTime)
         .format('HH:mm:ss.SSS');
       logger.info(`Completed in ${duration}`);
-      exit();
     } catch (e) {
       exit(e);
     }
