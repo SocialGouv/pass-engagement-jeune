@@ -53,4 +53,8 @@ module.exports = function (app) {
     delete req.session.userId;
     res.redirect('login');
   });
+
+  app.get('/mot-de-passe-oublie', async (req, res) => {
+    res.render('password-forgotten');
+  });
 };

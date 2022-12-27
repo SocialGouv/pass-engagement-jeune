@@ -16,6 +16,7 @@ const services = require('./services');
 const appHooks = require('./app.hooks');
 const channels = require('./channels');
 const pages = require('./pages');
+const mailer = require('./mailer');
 
 const authentication = require('./authentication');
 
@@ -75,6 +76,8 @@ app.configure(channels);
 app.set('view engine', 'pug');
 
 pages(app);
+const m = mailer(app);
+app.set('mailer', m);
 
 // Configure a middleware for 404s and the error handler
 app.use(express.notFound());
