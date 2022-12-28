@@ -22,6 +22,8 @@ const authentication = require('./authentication');
 
 const sequelize = require('./sequelize');
 
+const formatFunctions = require('./formatFunctions');
+
 const app = express(feathers());
 
 // Load app configuration
@@ -74,6 +76,8 @@ app.configure(services);
 app.configure(channels);
 
 app.set('view engine', 'pug');
+
+Object.assign(app.locals, formatFunctions);
 
 pages(app);
 const m = mailer(app);
