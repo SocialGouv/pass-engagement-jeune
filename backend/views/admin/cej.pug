@@ -4,18 +4,21 @@ block content
   <div class="fr-table">
     <table>
       <caption>Liste des jeunes</caption>
-    <thead>
-      <tr>
-        <th scope="col">Prénom</th><th scope="col">Nom</th><th scope="col">Email</th><th scope="col">Mot de passe créé</th><th scope="col">Date d'invitation</th><th scope="col">Date d'import</th>
-      </tr>
-    </thead>
-    <tbody>
-    each cej in items.data
-      <tr>
-        <td>#{cej.prenom}</td>
-        <td>#{cej.nom}</td>
-        <td><a href="mailto:#{cej.email}">#{cej.email}</a></td>
-        <td>#{formatOuiNon(cej.passwordCreated)}</td>
-        <td>#{cej.mailSentDate ? formatDate(cej.mailSentDate, 'DD/MM/YYYY à hh:mm') : 'Pas envoyé'}</td>
-        <td>#{formatDate(cej.createdAt, 'DD/MM/YYYY à hh:mm')}</td>
-      </tr>
+      <thead>
+        <tr>
+          <th scope="col">Prénom</th><th scope="col">Nom</th><th scope="col">Email</th><th scope="col">Mot de passe créé</th><th scope="col">Date d'invitation</th><th scope="col">Date d'import</th>
+        </tr>
+      </thead>
+      <tbody>
+      each cej in items.data
+        <tr>
+          <td>#{cej.prenom}</td>
+          <td>#{cej.nom}</td>
+          <td><a href="mailto:#{cej.email}">#{cej.email}</a></td>
+          <td>#{formatOuiNon(cej.passwordCreated)}</td>
+          <td>#{cej.mailSentDate ? formatDate(cej.mailSentDate, 'DD/MM/YYYY à hh:mm') : 'Pas envoyé'}</td>
+          <td>#{formatDate(cej.createdAt, 'DD/MM/YYYY à hh:mm')}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>

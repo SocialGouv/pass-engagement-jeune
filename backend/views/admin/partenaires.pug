@@ -4,15 +4,18 @@ block content
   <div class="fr-table">
     <table>
       <caption>Liste des partenaires</caption>
-    <thead>
-      <tr>
-        <th scope="col">Nom</th><th scope="col">Description</th><th scope="col">Lien</th>
-      </tr>
-    </thead>
-    <tbody>
-    each partenaire in partenaires.data
-      <tr>
-        <td>#{partenaire.name}</td>
-        <td>#{partenaire.description}</td>
-        <td><a href="#{partenaire.url}">#{partenaire.url}</a></td>
-      </tr>
+      <thead>
+        <tr>
+          <th scope="col">Nom</th><th scope="col">Description</th><th scope="col">Lien</th>
+        </tr>
+      </thead>
+      <tbody>
+      each partenaire in partenaires.data
+        <tr>
+          <td><a href="/admin/partenaires/#{partenaire.id}">#{partenaire.name}</a></td>
+          <td>#{partenaire.description}</td>
+          <td><a href="#{partenaire.url}">#{partenaire.url}</a></td>
+        </tr>
+      </tbody>
+    </table>
+
