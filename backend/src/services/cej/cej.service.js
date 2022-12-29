@@ -1,9 +1,12 @@
 // Initializes the `cej` service on path `/cej`
 const { Cej } = require('./cej.class');
 const hooks = require('./cej.hooks');
+const { v4: uuidv4 } = require('uuid');
 const Joi = require('joi');
 const { joiPasswordExtendCore } = require('joi-password');
 const joiPassword = Joi.extend(joiPasswordExtendCore);
+
+const motDePasseOublieCEJ = require('../../emails/cej/motDePasseOublieCEJ');
 
 module.exports = function (app) {
   const options = {
@@ -74,6 +77,27 @@ module.exports = function (app) {
     } else {
       res.sendStatus(403);
     }
+  });
+
+  app.post('/mot-de-passe-oublie', async (req, res) => {
+    const result = await app
+      .service('users')
+      .find({
+        query: { email: req.body.email },
+      })
+      .catch((e) => console.log(e));
+
+    if (result.total == 0) {
+      // Do nothing
+    } else {
+      const user = result.data[0];
+      const token = uuidv4();
+      user.token = token;
+      app.service('users').patch(user.id, { token });
+      const email = motDePasseOublieCEJ(app.get('mailer'));
+      await email.send(user);
+    }
+    res.render('password-forgotten-done', { email: req.body.email });
   });
 
   // Get our initialized service so that we can register hooks

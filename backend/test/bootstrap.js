@@ -1,7 +1,11 @@
 const Sequelize = require('sequelize');
 const { v4: uuidv4 } = require('uuid');
 
-const { USER_CEJ, USER_ADMIN } = require('./data/users');
+const {
+  USER_CEJ,
+  USER_CEJ_PASSWORD_FORGOTTEN,
+  USER_ADMIN,
+} = require('./data/users');
 
 const cleanUp = async (db) => {
   await db.query('DELETE FROM users', { type: Sequelize.QueryTypes.DELETE });
@@ -18,6 +22,18 @@ const bootstrap = async (app) => {
       role: 'CEJ',
       token: uuidv4(),
       mailSentDate: null,
+      passwordCreated: true,
+      createdAt: new Date(),
+    })
+  );
+
+  await app.service('users').create(
+    Object.assign(USER_CEJ_PASSWORD_FORGOTTEN, {
+      prenom: 'Jimmy',
+      nom: 'Forgotten',
+      role: 'CEJ',
+      token: uuidv4(),
+      mailSentDate: new Date(),
       passwordCreated: true,
       createdAt: new Date(),
     })
@@ -43,63 +59,65 @@ const bootstrap = async (app) => {
     updatedAt: '2022-12-14T14:24:55.913Z',
     createdAt: '2022-12-14T14:24:55.913Z',
   });
-  await app.service('offres').create([
-    {
-      title: 'Offre solidaire -15% - Paris',
-      description: 'Lorem ipsum.',
-      categories: 'EQUIPEMENTS',
-      type: 'PEJ',
-      echelle: 0,
-      modaliteUtilisation: 'COUPON_REDUCTION',
-      bonPlan: false,
-      partenaireId: partenaire.id,
-      location: {
-        crs: {
-          type: 'name',
-          properties: {
-            name: 'EPSG:4326',
-          },
+
+  await app.service('offres').create({
+    title: 'Offre solidaire -15% - Paris',
+    description: 'Lorem ipsum.',
+    categories: 'EQUIPEMENTS',
+    type: 'PEJ',
+    echelle: 0,
+    modaliteUtilisation: 'COUPON_REDUCTION',
+    bonPlan: false,
+    partenaireId: partenaire.id,
+    location: {
+      crs: {
+        type: 'name',
+        properties: {
+          name: 'EPSG:4326',
         },
-        type: 'Point',
-        coordinates: [48.866667, 2.333333],
       },
+      type: 'Point',
+      coordinates: [48.866667, 2.333333],
     },
-    {
-      title: 'Offre solidaire -15% - Nantes',
-      description: 'Lorem ipsum.',
-      categories: 'EQUIPEMENTS',
-      type: 'PEJ',
-      echelle: 0,
-      modaliteUtilisation: 'COUPON_REDUCTION',
-      bonPlan: false,
-      partenaireId: partenaire.id,
-      location: {
-        crs: {
-          type: 'name',
-          properties: {
-            name: 'EPSG:4326',
-          },
+  });
+
+  await app.service('offres').create({
+    title: 'Offre solidaire -15% - Nantes',
+    description: 'Lorem ipsum.',
+    categories: 'EQUIPEMENTS',
+    type: 'PEJ',
+    echelle: 0,
+    modaliteUtilisation: 'COUPON_REDUCTION',
+    bonPlan: false,
+    partenaireId: partenaire.id,
+    location: {
+      crs: {
+        type: 'name',
+        properties: {
+          name: 'EPSG:4326',
         },
-        type: 'Point',
-        coordinates: [47.218371, -1.553621],
       },
+      type: 'Point',
+      coordinates: [47.218371, -1.553621],
     },
-    {
-      title: 'Offre solidaire -15%',
-      description: 'Lorem ipsum.',
-      categories: 'EQUIPEMENTS',
-      type: 'PEJ',
-      echelle: 0,
-      location: null,
-      modaliteUtilisation: 'COUPON_REDUCTION',
-      bonPlan: false,
-      partenaireId: partenaire.id,
-    },
-  ]);
+  });
+
+  await app.service('offres').create({
+    title: 'Offre solidaire -15%',
+    description: 'Lorem ipsum.',
+    categories: 'EQUIPEMENTS',
+    type: 'PEJ',
+    echelle: 0,
+    location: null,
+    modaliteUtilisation: 'COUPON_REDUCTION',
+    bonPlan: false,
+    partenaireId: partenaire.id,
+  });
 };
 
 const app = require('../src/app');
 const db = app.get('sequelizeClient');
+app.setup();
 
 cleanUp(db);
 bootstrap(app);
