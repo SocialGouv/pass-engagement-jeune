@@ -1,0 +1,92 @@
+<html>
+  <head>
+    <title>Espace admin - Pass Engagement Jeune</title>
+    <link rel="apple-touch-icon" href="/dsfr/favicon/apple-touch-icon.png">
+    <link rel="icon" href="/dsfr/favicon/favicon.svg" type="image/svg+xml">
+    <link rel="shortcut icon" href="/dsfr/favicon/favicon.ico" type="image/x-icon">
+    <link rel="manifest" href="/dsfr/favicon/manifest.webmanifest" crossorigin="use-credentials">
+    <link href="/dsfr/dsfr.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <script type="module" href="/dsfr/dsfr.module.min.js" ></script>
+    <script type="text/javascript" nomodule href="dsfr/dsfr.nomodule.min.js" ></script>
+    <header role="banner" class="fr-header">
+      <div class="fr-header__body">
+        <div class="fr-container">
+          <div class="fr-header__body-row">
+            <div class="fr-header__brand fr-enlarge-link">
+              <div class="fr-header__brand-top">
+                <div class="fr-header__logo">
+                  <a href="/" title="Accueil - Nom de l’entité (ministère, secrétariat d‘état, gouvernement)">
+                    <p class="fr-logo">Pass<br>Engagement Jeune</p>
+                      </a>
+                </div>
+                  <div class="fr-header__navbar">
+                    <button class="fr-btn--menu fr-btn" data-fr-opened="false" title="Menu">Menu</button>
+              </div>
+            </div>
+            <div class="fr-header__service">
+              <a href="/" title="Accueil - [À MODIFIER - Nom du site / service] - Nom de l’entité (ministère, secrétariat d‘état, gouvernement)">
+                <p class="fr-header__service-title">Espace admin</p>
+              </a>
+            </div>
+          </div>
+          <div class="fr-header__tools">
+            <div class="fr-header__tools-links">
+              <ul class="fr-btns-group">
+                <li>
+                  <a class="fr-btn fr-icon-logout-box-r-line" href="/logout">Se déconnecter
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="fr-header__menu fr-modal">
+      <div class="fr-container">
+        <button class="fr-btn--close fr-btn" title="Fermer">
+          Fermer
+            </button>
+        <div class="fr-header__menu-links">
+          </div>
+            <nav class="fr-nav" role="navigation" aria-label="Menu principal">
+            <ul class="fr-nav__list">
+              <li class="fr-nav__item">
+                - if(path === '/admin/partenaires')
+                  <a class="fr-nav__link" href="/admin/partenaires" aria-current="none" target="_self">Partenaires</a>
+                - else
+                  <a class="fr-nav__link" href="/admin/partenaires" target="_self">Partenaires</a>
+              </li>
+              <li class="fr-nav__item">
+                - if(path === '/admin/offres')
+                  <a class="fr-nav__link" href="/admin/offres" aria-current="none" target="_self">Offres</a>
+                - else
+                  <a class="fr-nav__link" href="/admin/offres" target="_self">Offres</a>
+              </li>
+              <li class="fr-nav__item">
+                - if(path === '/admin/jeunes-cej')
+                  <a class="fr-nav__link" href="/admin/jeunes-cej" aria-current="none" target="_self">Jeunes CEJ</a>
+                - else
+                  <a class="fr-nav__link" href="/admin/jeunes-cej" target="_self">Jeunes CEJ</a>
+              </li>
+              </ul>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="fr-container--fluid ds_banner">
+        <div class="fr-container">
+          <div class="fr-grid-row fr-grid-row--gutters fr-py-6w">
+            <div class="fr-col-12 fr-mb-2w">
+              block content
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
