@@ -42,7 +42,14 @@ module.exports = function (app) {
       const user = result.data[0];
       if (bcrypt.compareSync(req.body.password, user.password)) {
         req.session.userId = user.id;
-        res.redirect('/partenaires-pej');
+        req.session.role = user.role;
+        if (user.role == 'ADMIN') {
+          res.redirect('/admin');
+        } else if (user.role == 'CEJ') {
+          res.redirect('/partenaires-pej');
+        } else {
+          res.redirect('/logout');
+        }
       } else {
         res.sendStatus(401);
       }
@@ -52,5 +59,9 @@ module.exports = function (app) {
   app.get('/logout', async (req, res) => {
     delete req.session.userId;
     res.redirect('login');
+  });
+
+  app.get('/mot-de-passe-oublie', async (req, res) => {
+    res.render('password-forgotten');
   });
 };

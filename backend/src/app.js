@@ -16,10 +16,13 @@ const services = require('./services');
 const appHooks = require('./app.hooks');
 const channels = require('./channels');
 const pages = require('./pages');
+const mailer = require('./mailer');
 
 const authentication = require('./authentication');
 
 const sequelize = require('./sequelize');
+
+const formatFunctions = require('./formatFunctions');
 
 const app = express(feathers());
 
@@ -74,7 +77,11 @@ app.configure(channels);
 
 app.set('view engine', 'pug');
 
+Object.assign(app.locals, formatFunctions);
+
 pages(app);
+const m = mailer(app);
+app.set('mailer', m);
 
 // Configure a middleware for 404s and the error handler
 app.use(express.notFound());
