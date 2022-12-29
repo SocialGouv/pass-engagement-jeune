@@ -6,7 +6,7 @@ const { CookieJar } = require('tough-cookie');
 const Sequelize = require('sequelize');
 
 const { getUrl, port } = require('../../src/utils')(app);
-const { USER_CEJ, STRONG_PASSWORD, WEAK_PASSWORD } = require('../data/users');
+const { USER_CEJ, USER_CEJ_PASSWORD_FORGOTTEN, STRONG_PASSWORD, WEAK_PASSWORD } = require('../data/users');
 
 describe('\'cej\' service', () => {
   let server;
@@ -52,6 +52,23 @@ describe('\'cej\' service', () => {
       assert.equal(response.status, 401);
     }
   });
+
+  it('Should ask for a new password (password forgotten)', async () => {
+    const userInfo = USER_CEJ_PASSWORD_FORGOTTEN;
+    const jar = new CookieJar();
+    const client = wrapper(axios.create({ jar }));
+
+    const response = await client.post(getUrl('/mot-de-passe-oublie'), {
+      email: userInfo.email,
+    });
+
+    assert.ok(
+      response.data.indexOf(
+        'Un email de réinitialisation de mot de passe a été envoyé à jimmy.forgotten@email.fr'
+      ) !== -1
+    );
+    assert.equal(response.status, 200);
+  }).timeout(20000);
 
   describe('Account creation', async () => {
     it('Should access to password choice with token', async () => {
