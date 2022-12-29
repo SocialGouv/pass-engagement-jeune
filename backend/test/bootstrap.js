@@ -59,63 +59,65 @@ const bootstrap = async (app) => {
     updatedAt: '2022-12-14T14:24:55.913Z',
     createdAt: '2022-12-14T14:24:55.913Z',
   });
-  await app.service('offres').create([
-    {
-      title: 'Offre solidaire -15% - Paris',
-      description: 'Lorem ipsum.',
-      categories: 'EQUIPEMENTS',
-      type: 'PEJ',
-      echelle: 0,
-      modaliteUtilisation: 'COUPON_REDUCTION',
-      bonPlan: false,
-      partenaireId: partenaire.id,
-      location: {
-        crs: {
-          type: 'name',
-          properties: {
-            name: 'EPSG:4326',
-          },
+
+  await app.service('offres').create({
+    title: 'Offre solidaire -15% - Paris',
+    description: 'Lorem ipsum.',
+    categories: 'EQUIPEMENTS',
+    type: 'PEJ',
+    echelle: 0,
+    modaliteUtilisation: 'COUPON_REDUCTION',
+    bonPlan: false,
+    partenaireId: partenaire.id,
+    location: {
+      crs: {
+        type: 'name',
+        properties: {
+          name: 'EPSG:4326',
         },
-        type: 'Point',
-        coordinates: [48.866667, 2.333333],
       },
+      type: 'Point',
+      coordinates: [48.866667, 2.333333],
     },
-    {
-      title: 'Offre solidaire -15% - Nantes',
-      description: 'Lorem ipsum.',
-      categories: 'EQUIPEMENTS',
-      type: 'PEJ',
-      echelle: 0,
-      modaliteUtilisation: 'COUPON_REDUCTION',
-      bonPlan: false,
-      partenaireId: partenaire.id,
-      location: {
-        crs: {
-          type: 'name',
-          properties: {
-            name: 'EPSG:4326',
-          },
+  });
+
+  await app.service('offres').create({
+    title: 'Offre solidaire -15% - Nantes',
+    description: 'Lorem ipsum.',
+    categories: 'EQUIPEMENTS',
+    type: 'PEJ',
+    echelle: 0,
+    modaliteUtilisation: 'COUPON_REDUCTION',
+    bonPlan: false,
+    partenaireId: partenaire.id,
+    location: {
+      crs: {
+        type: 'name',
+        properties: {
+          name: 'EPSG:4326',
         },
-        type: 'Point',
-        coordinates: [47.218371, -1.553621],
       },
+      type: 'Point',
+      coordinates: [47.218371, -1.553621],
     },
-    {
-      title: 'Offre solidaire -15%',
-      description: 'Lorem ipsum.',
-      categories: 'EQUIPEMENTS',
-      type: 'PEJ',
-      echelle: 0,
-      location: null,
-      modaliteUtilisation: 'COUPON_REDUCTION',
-      bonPlan: false,
-      partenaireId: partenaire.id,
-    },
-  ]);
+  });
+
+  await app.service('offres').create({
+    title: 'Offre solidaire -15%',
+    description: 'Lorem ipsum.',
+    categories: 'EQUIPEMENTS',
+    type: 'PEJ',
+    echelle: 0,
+    location: null,
+    modaliteUtilisation: 'COUPON_REDUCTION',
+    bonPlan: false,
+    partenaireId: partenaire.id,
+  });
 };
 
 const app = require('../src/app');
 const db = app.get('sequelizeClient');
+app.setup();
 
 cleanUp(db);
 bootstrap(app);

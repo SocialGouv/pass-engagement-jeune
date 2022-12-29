@@ -30,7 +30,12 @@ module.exports = function (app) {
   });
 
   app.get('/admin/offres', checkACL, async (req, res) => {
-    const result = await app.service('offres').find();
+    const result = await app.service('offres').find({
+      sequelize: {
+        include: [{ model: app.services.partenaires.Model, as: 'partenaire' }],
+        raw: false,
+      },
+    });
     res.render('admin/offres', { items: result, path: req.path });
   });
 

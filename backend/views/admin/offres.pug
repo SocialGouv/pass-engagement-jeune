@@ -6,7 +6,7 @@ block content
       <caption>Liste des offres</caption>
     <thead>
       <tr>
-        <th scope="col">Titre</th><th scope="col">Type</th><th scope="col">Catégorie</th><th scope="col">Échelle</th><th scope="col">Localisation</th><th scope="col">Modalité d'utilisation</th><th scope="col">Bon plan</th>
+        <th scope="col">Titre</th><th scope="col">Type</th><th scope="col">Partenaire</th><th scope="col">Catégorie</th><th scope="col">Échelle</th><th scope="col">Localisation</th><th scope="col">Modalité d'utilisation</th><th scope="col">Bon plan</th>
       </tr>
     </thead>
     <tbody>
@@ -14,6 +14,7 @@ block content
       <tr>
         <td>#{offre.title}</td>
         <td>#{offre.type}</td>
+        <td>#{offre.partenaire.name}</td>
         <td>#{formatEnum('categories', offre.categories)}</td>
         <td>#{formatEnum('echelle',offre.echelle)}</td>
         <td>

@@ -71,6 +71,12 @@ describe('\'admin\' service', () => {
     assert.ok(
       response.data.indexOf('<td>Offre solidaire -15% - Paris</td>') !== -1
     );
+
+
+    assert.ok(
+      response.data.indexOf('<td>RéparSeb</td>') !== -1
+    );
+
     assert.ok(response.data.indexOf('<td>Nationale</td>') !== -1);
   });
 

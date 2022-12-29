@@ -4,7 +4,7 @@ module.exports = function (app) {
   const connectionString = app.get('postgres');
   const sequelize = new Sequelize(connectionString, {
     dialect: 'postgres',
-    logging: process.env.NODE_ENV == 'dev',
+    logging: process.env.NODE_ENV == 'dev' ? console.log : false,
     define: {
       freezeTableName: true,
     },
