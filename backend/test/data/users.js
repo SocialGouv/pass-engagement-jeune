@@ -3,7 +3,10 @@ module.exports = {
     email: 'suzette.apidet@email.fr',
     password: 'supercej',
   },
-
+  USER_CEJ_PASSWORD_FORGOTTEN: {
+    email: 'jimmy.forgotten@email.fr',
+    password: 'forgotten',
+  },
   USER_ADMIN: {
     email: 'passengagementjeune@beta.gouv.fr',
     password: 'supersecret',
