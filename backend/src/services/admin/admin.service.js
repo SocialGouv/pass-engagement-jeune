@@ -16,7 +16,7 @@ module.exports = function (app) {
     if (req.session.userId && req.session.role == 'ADMIN') {
       next();
     } else {
-      throw new Forbidden('Vous n\'avez pas l\'autorisation');
+      res.redirect('/login');
     }
   };
 
