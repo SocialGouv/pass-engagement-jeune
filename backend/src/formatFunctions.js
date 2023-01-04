@@ -26,4 +26,5 @@ module.exports = {
   formatOuiNon: (value) => (value ? 'oui' : 'non'),
   formatDate: (value, format) => dayjs(value).format(format),
   formatEnum: (type, key) => enumLabels[type][key],
+  enumLabels: enumLabels,
 };

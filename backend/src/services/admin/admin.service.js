@@ -1,6 +1,7 @@
 // Initializes the `admin` service on path `/admin`
 const { Admin } = require('./admin.class');
 const hooks = require('./admin.hooks');
+const { enumLabels } = require('../../formatFunctions');
 
 module.exports = function (app) {
   const options = {
@@ -101,6 +102,96 @@ module.exports = function (app) {
       },
     });
     res.render('admin/offres', { items: result, path: req.path });
+  });
+
+  app.get('/admin/offres/:id', checkACL, async (req, res) => {
+    try {
+      const result = await app.service('offres').find({
+        query: { id: req.params.id },
+        sequelize: {
+          include: [
+            { model: app.services.partenaires.Model, as: 'partenaire' },
+          ],
+          raw: false,
+        },
+      });
+
+      if (result.total == 0) {
+        res.sendStatus(404);
+      }
+      res.render('admin/offre_detail', {
+        offre: result.data[0],
+        path: req.path,
+        editMode: false,
+        success: req.query.success === 'true',
+        enumLabels,
+      });
+    } catch (e) {
+      res.sendStatus(404);
+    }
+  });
+
+  app.get('/admin/offres/:id/edit', checkACL, async (req, res) => {
+    try {
+      const result = await app.service('offres').find({
+        query: { id: req.params.id },
+        sequelize: {
+          include: [
+            { model: app.services.partenaires.Model, as: 'partenaire' },
+          ],
+          raw: false,
+        },
+      });
+
+      if (result.total == 0) {
+        res.sendStatus(404);
+      }
+      res.render('admin/offre_detail', {
+        offre: result.data[0],
+        path: req.path,
+        editMode: true,
+      });
+    } catch (e) {
+      res.sendStatus(404);
+    }
+  });
+
+  app.post('/admin/offres/:id', checkACL, async (req, res) => {
+    try {
+      const result = await app.service('offres').find({
+        query: { id: req.params.id },
+      });
+
+      console.log(result);
+
+      if (result.total == 0) {
+        res.sendStatus(404);
+      }
+
+      const offre = result.data[0];
+
+      const data = req.body;
+      data.bonPlan = !!data.bonPlan;
+      const coordinates = data.location.split(',').map((num) => parseFloat(num));
+      data.echelle = parseInt(data.echelle);
+      data.location = {
+        crs: {
+          type: 'name',
+          properties: {
+            name: 'EPSG:4326',
+          },
+        },
+        type: 'Point',
+        coordinates: coordinates,
+      };
+
+      await app.service('offres').patch(offre.id, data);
+
+      res.redirect(`/admin/offres/${offre.id}?success=true`);
+    } catch (e) {
+      console.log(e);
+      res.sendStatus(404);
+    }
   });
 
   app.get('/admin/jeunes-cej', checkACL, async (req, res) => {

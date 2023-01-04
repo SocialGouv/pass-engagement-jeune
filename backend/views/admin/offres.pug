@@ -12,7 +12,7 @@ block content
       <tbody>
       each offre in items.data
         <tr>
-          <td>#{offre.title}</td>
+          <td><a href="/admin/offres/#{offre.id}">#{offre.title}</a></td>
           <td>#{offre.type}</td>
           <td><a href="/admin/partenaires/#{offre.partenaire.id}">#{offre.partenaire.name}</a></td>
           <td>#{formatEnum('categories', offre.categories)}</td>

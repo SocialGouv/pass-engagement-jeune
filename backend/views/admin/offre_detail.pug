@@ -1,0 +1,106 @@
+extends ./layout.pug
+
+block content
+
+  if success
+    <div class="fr-alert fr-alert--success fr-alert--sm">
+        <h3 class="fr-alert__title">Mise à jour avec succès</h3>
+        <button class="fr-link--close fr-link" onclick="const alert = this.parentNode; alert.parentNode.removeChild(alert)">Masquer le message</button>
+    </div>
+
+  h2 Offre #{offre.title}
+
+    if !editMode
+        <a class="fr-btn fr-btn--sm fr-btn--tertiary fr-ml-1w fr-btn--icon-left fr-icon-edit-box-line" href="/admin/offres/#{offre.id}/edit">Modifier</a>
+
+    <form action="/admin/offres/#{offre.id}" method="POST">
+
+        <fieldset class="fr-fieldset fr-mt-2w" aria-label="Offre" aria-describedby="name-1-fieldset-messages">
+            <div class="fr-fieldset__element">
+                <div class="fr-input-group">
+                    <label class="fr-label" for="input-partenaire-1">Partenaire</label>
+                    <span class="fr-text--sm" id="input-partenaire-1"><a href="/admin/partenaires/#{offre.partenaire.id}">#{offre.partenaire.name}</a></span>
+                </div>
+                <div class="fr-input-group">
+                    <label class="fr-label" for="input-title-1">Titre</label>
+                    if editMode
+                        <input class="fr-input" spellcheck="true" name="title" id="input-title-1" type="text" value="#{offre.title}">
+                    else
+                        <span class="fr-text--sm">#{offre.title}</span>
+                </div>
+                <div class="fr-input-group">
+                    if editMode
+                        <div class="fr-select-group">
+                            <label class="fr-label" for="input-categories">Catégorie</label>
+                            <select class="fr-select" id="input-categories" name="categories">
+                                each val, index in enumLabels.categories
+                                    option(value=index, selected= index == offre.categories) #{val}
+                            </select>
+                        </div>
+                    else
+                        <label class="fr-label" for="input-categories-1">Catégorie</label>
+                        <span class="fr-text--sm">#{formatEnum('categories', offre.categories)}</span>
+                </div>
+                <div class="fr-input-group">
+                    if editMode
+                        <div class="fr-select-group">
+                            <label class="fr-label" for="input-echelle">&Eacute;chelle</label>
+                            <select class="fr-select" id="input-echelle" name="echelle">
+                                each val, index in enumLabels.echelle
+                                    option(value=index, selected= index == offre.echelle) #{val}
+                            </select>
+                        </div>
+                    else
+                        <label class="fr-label" for="input-echelle-1">&Eacute;chelle</label>
+                        <span class="fr-text--sm">#{formatEnum('echelle',offre.echelle)}</span>
+                </div>
+                if offre.location
+                    <div class="fr-input-group">
+                        <label class="fr-label" for="input-location-1">Localisation</label>
+                        if editMode
+                            <input class="fr-input" spellcheck="true" name="location" id="input-location-1" type="text" value="#{offre.location.coordinates[0]},#{offre.location.coordinates[1]}">
+                        else
+                        <script src="http://www.openlayers.org/api/OpenLayers.js"></script>
+                            <script>document.addEventListener("DOMContentLoaded", function(event) { map = new OpenLayers.Map("mapdiv");map.addLayer(new OpenLayers.Layer.OSM());var lonLat = new OpenLayers.LonLat(#{offre.location.coordinates[1]}, #{offre.location.coordinates[0]}).transform(new OpenLayers.Projection("EPSG:4326"),map.getProjectionObject());var zoom=6;var markers = new OpenLayers.Layer.Markers( "Markers" ); map.addLayer(markers);markers.addMarker(new OpenLayers.Marker(lonLat));map.setCenter (lonLat, zoom);});</script>
+                            <div id="mapdiv" style="width:400px; height:400px;"></div>
+                    </div>
+                <div class="fr-input-group">
+                    
+                    if editMode
+                        <div class="fr-select-group">
+                            <label class="fr-label" for="input-modaliteUtilisation">Modalité d'utilisation</label>
+                            <select class="fr-select" id="input-modaliteUtilisation" name="modaliteUtilisation">
+                                each val, index in enumLabels.modaliteUtilisation
+                                    option(value=index, selected= index == offre.modaliteUtilisation) #{val}
+                            </select>
+                        </div>
+                    else
+                        <label class="fr-label" for="input-modaliteUtilisation-1">Modalité d'utilisation</label>
+                        <span class="fr-text--sm">#{formatEnum('modaliteUtilisation', offre.modaliteUtilisation)}</span>
+                </div>
+
+                <div class="fr-input-group">
+                    if editMode
+                        <div class="fr-checkbox-group">
+                            if offre.bonPlan
+                                <input type="checkbox" id="bonPlan" name="bonPlan" checked>
+                            else 
+                                <input type="checkbox" id="bonPlan" name="bonPlan">
+                            <label class="fr-label" for="bonPlan">Bon plan</label>
+                        </div>
+                    else if offre.bonPlan
+                        <span class="fr-text--sm fr-icon-checkbox-circle-fill">Bon plan</span>
+                </div>
+            </div>
+        </fieldset>
+
+        if editMode
+            <ul class="fr-btns-group fr-btns-group--inline-md">
+                <li>
+                    <input type="submit" class="fr-btn" value="Mettre à jour" />
+                </li>
+                <li>
+                    <a class="fr-btn fr-btn--secondary" href="/admin/offres/#{offre.id}">Annuler</a>
+                </li>
+            </ul>
+    </form>
