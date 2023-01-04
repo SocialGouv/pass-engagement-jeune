@@ -1,0 +1,74 @@
+extends ./layout.pug
+
+block content
+
+  if success
+    <div class="fr-alert fr-alert--success fr-alert--sm">
+        <h3 class="fr-alert__title">Mise à jour avec succès</h3>
+        <button class="fr-link--close fr-link" onclick="const alert = this.parentNode; alert.parentNode.removeChild(alert)">Masquer le message</button>
+    </div>
+
+  h2 Partenaire #{partenaire.name}
+
+    if !editMode
+        <a class="fr-btn fr-btn--sm fr-btn--tertiary fr-ml-1w fr-btn--icon-left fr-icon-edit-box-line" href="/admin/partenaires/#{partenaire.id}/edit">Modifier</a>
+        <div><img width="100px" src="https://cellar-fr-north-hds-c1.services.clever-cloud.com/images-pej/prestataires/#{partenaire.id}.png" /></div>
+
+    <form action="/admin/partenaires/#{partenaire.id}" method="POST">
+
+        <fieldset class="fr-fieldset fr-mt-2w" aria-label="Demande de nom et prénom" aria-describedby="name-1-fieldset-messages">
+        <div class="fr-fieldset__element">
+        <div class="fr-input-group">
+            <label class="fr-label" for="input-family-name-1">Nom</label>
+            if editMode
+                <input class="fr-input" spellcheck="false" name="name" id="input-name-1" type="text" value="#{partenaire.name}">
+            else
+                <span class="fr-text--sm">#{partenaire.name}</span>
+        </div>
+            <div class="fr-input-group">
+            <label class="fr-label" for="input-family-name-1">Description</label>
+            if editMode
+                <textarea class="fr-input" spellcheck="true" name="description" id="input-description-1" type="text">#{partenaire.description}</textarea>
+            else
+                <p class="fr-text--sm">#{partenaire.description}</p>
+        </div>
+        </div>
+        </fieldset>
+
+        if editMode
+            <ul class="fr-btns-group fr-btns-group--inline-md">
+                <li>
+                    <input type="submit" class="fr-btn" value="Mettre à jour" />
+                </li>
+                <li>
+                    <a class="fr-btn fr-btn--secondary" href="/admin/partenaires/#{partenaire.id}">Annuler</a>
+                </li>
+            </ul>
+    </form>
+
+    if !editMode
+      <div class="fr-table">
+        <table>
+            <caption>Liste des offres</caption>
+            <thead>
+                <tr>
+                    <th scope="col">Titre</th><th scope="col">Type</th><th scope="col">Catégorie</th><th scope="col">Échelle</th><th scope="col">Localisation</th><th scope="col">Modalité d'utilisation</th><th scope="col">Bon plan</th>
+                </tr>
+            </thead>
+            <tbody>
+                each offre in partenaire.offres
+                    <tr>
+                        <td>#{offre.title}</td>
+                        <td>#{offre.type}</td>
+                        <td>#{formatEnum('categories', offre.categories)}</td>
+                        <td>#{formatEnum('echelle',offre.echelle)}</td>
+                        <td>
+                        if offre.location
+                            <a href="https://www.openstreetmap.org/search?query=#{offre.location.coordinates[0]},#{offre.location.coordinates[1]}"">Ouvrir sur la carte</a>
+                        </td>
+                        <td>#{formatEnum('modaliteUtilisation', offre.modaliteUtilisation)}</td>
+                        <td>#{formatOuiNon(offre.bonPlan)}</td>
+                    </tr>
+            </tbody>
+        </table>
+      </div>

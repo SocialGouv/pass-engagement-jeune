@@ -45,7 +45,12 @@ describe('\'admin\' service', () => {
       response.data.indexOf('<caption>Liste des partenaires</caption>') !== -1
     );
 
-    assert.ok(response.data.indexOf('<td>RéparSeb</td>') !== -1);
+    const partenaires = await app.service('partenaires').find();
+    assert.ok(
+      response.data.indexOf(
+        `<td><a href="/admin/partenaires/${partenaires.data[0].dataValues.id}">${partenaires.data[0].dataValues.name}</a></td>`
+      ) !== -1
+    );
   });
 
   it('Should show \'offres\' page', async () => {
@@ -72,9 +77,11 @@ describe('\'admin\' service', () => {
       response.data.indexOf('<td>Offre solidaire -15% - Paris</td>') !== -1
     );
 
-
+    const partenaires = await app.service('partenaires').find();
     assert.ok(
-      response.data.indexOf('<td>RéparSeb</td>') !== -1
+      response.data.indexOf(
+        `<td><a href="/admin/partenaires/${partenaires.data[0].dataValues.id}">${partenaires.data[0].dataValues.name}</a></td>`
+      ) !== -1
     );
 
     assert.ok(response.data.indexOf('<td>Nationale</td>') !== -1);
