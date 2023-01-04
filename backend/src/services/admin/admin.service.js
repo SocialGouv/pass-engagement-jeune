@@ -1,7 +1,6 @@
 // Initializes the `admin` service on path `/admin`
 const { Admin } = require('./admin.class');
 const hooks = require('./admin.hooks');
-const { Forbidden } = require('@feathersjs/errors');
 
 module.exports = function (app) {
   const options = {
@@ -16,7 +15,7 @@ module.exports = function (app) {
     if (req.session.userId && req.session.role == 'ADMIN') {
       next();
     } else {
-      res.redirect('/login');
+      res.redirect(403, '/login');
     }
   };
 
