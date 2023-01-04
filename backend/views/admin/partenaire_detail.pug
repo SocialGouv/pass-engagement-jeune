@@ -16,17 +16,17 @@ block content
 
     <form action="/admin/partenaires/#{partenaire.id}" method="POST">
 
-        <fieldset class="fr-fieldset fr-mt-2w" aria-label="Demande de nom et prénom" aria-describedby="name-1-fieldset-messages">
+        <fieldset class="fr-fieldset fr-mt-2w" aria-label="Partenaire" aria-describedby="name-1-fieldset-messages">
         <div class="fr-fieldset__element">
         <div class="fr-input-group">
-            <label class="fr-label" for="input-family-name-1">Nom</label>
+            <label class="fr-label" for="input-name-1">Nom</label>
             if editMode
                 <input class="fr-input" spellcheck="false" name="name" id="input-name-1" type="text" value="#{partenaire.name}">
             else
                 <span class="fr-text--sm">#{partenaire.name}</span>
         </div>
             <div class="fr-input-group">
-            <label class="fr-label" for="input-family-name-1">Description</label>
+            <label class="fr-label" for="input-description-1">Description</label>
             if editMode
                 <textarea class="fr-input" spellcheck="true" name="description" id="input-description-1" type="text">#{partenaire.description}</textarea>
             else
@@ -58,7 +58,7 @@ block content
             <tbody>
                 each offre in partenaire.offres
                     <tr>
-                        <td>#{offre.title}</td>
+                        <td><a href="/admin/offres/#{offre.id}">#{offre.title}</a></td>
                         <td>#{offre.type}</td>
                         <td>#{formatEnum('categories', offre.categories)}</td>
                         <td>#{formatEnum('echelle',offre.echelle)}</td>

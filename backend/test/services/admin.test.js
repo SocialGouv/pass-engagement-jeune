@@ -73,8 +73,9 @@ describe('\'admin\' service', () => {
       response.data.indexOf('<caption>Liste des offres</caption>') !== -1
     );
 
+    const offres = await app.service('offres').find();
     assert.ok(
-      response.data.indexOf('<td>Offre solidaire -15% - Paris</td>') !== -1
+      response.data.indexOf(`<td><a href="/admin/offres/${offres.data[0].id}">${offres.data[0].title}</a></td>`) !== -1
     );
 
     const partenaires = await app.service('partenaires').find();
