@@ -1,0 +1,8 @@
+if success
+  <div class="fr-alert fr-alert--success fr-alert--sm">
+      if action == 'create'
+        <h3 class="fr-alert__title">Création avec succès</h3>
+      else if action == 'delete'
+        <h3 class="fr-alert__title">Suppression avec succès</h3>
+      <button class="fr-link--close fr-link" onclick="const alert = this.parentNode; alert.parentNode.removeChild(alert)">Masquer le message</button>
+  </div>

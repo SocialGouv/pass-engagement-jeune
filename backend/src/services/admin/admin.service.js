@@ -24,6 +24,10 @@ module.exports = function (app) {
     res.redirect('admin/partenaires');
   });
 
+  /*
+   * Gestion des partenaires
+   */
+
   app.get('/admin/partenaire/create', checkACL, async (req, res) => {
     res.render('admin/partenaire_detail', {
       partenaire: null,
@@ -103,10 +107,6 @@ module.exports = function (app) {
     try {
       const result = await app.service('partenaires').find({
         query: { id: req.params.id },
-        sequelize: {
-          include: [{ model: app.services.offres.Model, as: 'offres' }],
-          raw: false,
-        },
       });
 
       if (result.total == 0) {
@@ -117,7 +117,6 @@ module.exports = function (app) {
 
       res.redirect('/admin/partenaires?action=delete&success=true');
     } catch (e) {
-      console.log(app.service('partenaires'))
       res.sendStatus(404);
     }
   });
@@ -132,6 +131,51 @@ module.exports = function (app) {
     });
   });
 
+  /*
+   * Gestion des offres
+   */
+
+  app.get('/admin/offre/create', checkACL, async (req, res) => {
+    const partenaires = await app.service('partenaires').find();
+    res.render('admin/offre_detail', {
+      partenaire: null,
+      path: req.path,
+      editMode: true,
+      partenaires: partenaires.data
+    });
+  });
+
+  app.post('/admin/offre', checkACL, async (req, res) => {
+    let offre= {};
+    offre = req.body;
+
+    // TODO : utils for parsing
+    offre.bonPlan = !!offre.bonPlan;
+    if(offre.location == '') {
+      delete offre.location;
+    } else {
+      const coordinates = offre.location
+        .split(',')
+        .map((num) => parseFloat(num));
+      offre.echelle = parseInt(offre.echelle);
+      offre.location =
+      offre.location != ''
+        ? null
+        : {
+          crs: {
+            type: 'name',
+            properties: {
+              name: 'EPSG:4326',
+            },
+          },
+          type: 'Point',
+          coordinates: coordinates,
+        };
+    }
+    app.service('offres').create(offre);
+    res.redirect('/admin/offres?action=create&success=true');
+  });
+
   app.get('/admin/offres', checkACL, async (req, res) => {
     const result = await app.service('offres').find({
       sequelize: {
@@ -139,7 +183,12 @@ module.exports = function (app) {
         raw: false,
       },
     });
-    res.render('admin/offres', { items: result, path: req.path });
+    res.render('admin/offres', {
+      items: result,
+      path: req.path,
+      action: req.query.action,
+      success: req.query.success === 'true',
+    });
   });
 
   app.get('/admin/offres/:id', checkACL, async (req, res) => {
@@ -194,13 +243,29 @@ module.exports = function (app) {
     }
   });
 
-  app.post('/admin/offres/:id', checkACL, async (req, res) => {
+  app.get('/admin/offres/:id/delete', checkACL, async (req, res) => {
     try {
       const result = await app.service('offres').find({
         query: { id: req.params.id },
       });
 
-      console.log(result);
+      if (result.total == 0) {
+        res.sendStatus(404);
+      }
+      const offre = result.data[0];
+      await app.service('offres').remove(offre.id);
+
+      res.redirect('/admin/offres?action=delete&success=true');
+    } catch (e) {
+      res.sendStatus(404);
+    }
+  });
+
+  app.post('/admin/offres/:id', checkACL, async (req, res) => {
+    try {
+      const result = await app.service('offres').find({
+        query: { id: req.params.id },
+      });
 
       if (result.total == 0) {
         res.sendStatus(404);
@@ -229,7 +294,6 @@ module.exports = function (app) {
 
       res.redirect(`/admin/offres/${offre.id}?success=true`);
     } catch (e) {
-      console.log(e);
       res.sendStatus(404);
     }
   });
