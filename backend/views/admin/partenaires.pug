@@ -1,22 +1,36 @@
 extends ./layout.pug
 
 block content
-  <div class="fr-table">
-    <table>
-      <caption>Liste des partenaires</caption>
-      <thead>
-        <tr>
-          <th scope="col">Illustration</th><th scope="col">Nom</th><th scope="col">Description</th><th scope="col">Lien</th>
-        </tr>
-      </thead>
-      <tbody>
-      each partenaire in partenaires.data
-        <tr>
-          <td><img width="100px" src="https://cellar-fr-north-hds-c1.services.clever-cloud.com/images-pej/prestataires/#{partenaire.id}.png" /></td>
-          <td><a href="/admin/partenaires/#{partenaire.id}">#{partenaire.name}</a></td>
-          <td>#{partenaire.description}</td>
-          <td><a href="#{partenaire.url}">#{partenaire.url}</a></td>
-        </tr>
-      </tbody>
-    </table>
 
+  if success
+    <div class="fr-alert fr-alert--success fr-alert--sm">
+        if action == 'create'
+          <h3 class="fr-alert__title">Création avec succès</h3>
+        else if action == 'delete'
+          <h3 class="fr-alert__title">Suppression avec succès</h3>
+        <button class="fr-link--close fr-link" onclick="const alert = this.parentNode; alert.parentNode.removeChild(alert)">Masquer le message</button>
+    </div>
+
+  if partenaires.data.length > 0
+    <div class="fr-table">
+      <table>
+        <caption class="fr-mb-2w">Liste des partenaires <a class="fr-btn fr-btn--sm fr-btn--tertiary fr-ml-1w fr-btn--icon-left fr-icon-add-circle-fill" href="/admin/partenaire/create">Créer un partenaire</a></caption>
+        <thead>
+          <tr>
+            <th scope="col">Illustration</th><th scope="col">Nom</th><th scope="col">Description</th><th scope="col">Lien</th>
+          </tr>
+        </thead>
+        <tbody>
+        each partenaire in partenaires.data
+          <tr>
+            <td><img width="100px" src="https://cellar-fr-north-hds-c1.services.clever-cloud.com/images-pej/prestataires/#{partenaire.id}.png" /></td>
+            <td><a href="/admin/partenaires/#{partenaire.id}">#{partenaire.name}</a></td>
+            <td>#{partenaire.description}</td>
+            <td><a href="#{partenaire.url}">#{partenaire.url}</a></td>
+          </tr>
+        </tbody>
+      </table>
+  else 
+      h3 Liste des partenaires
+      span Pas de partenaire pour le moment
+      <a class="fr-btn fr-btn--sm fr-btn--tertiary fr-ml-1w fr-btn--icon-left fr-icon-add-circle-fill" href="/admin/partenaire/create">Créer le premier partenaire</a>

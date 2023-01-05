@@ -24,6 +24,19 @@ module.exports = function (app) {
     res.redirect('admin/partenaires');
   });
 
+  app.get('/admin/partenaire/create', checkACL, async (req, res) => {
+    res.render('admin/partenaire_detail', {
+      partenaire: null,
+      path: req.path,
+      editMode: true,
+    });
+  });
+
+  app.post('/admin/partenaire', checkACL, async (req, res) => {
+    app.service('partenaires').create(req.body);
+    res.redirect('/admin/partenaires?action=create&success=true');
+  });
+
   app.get('/admin/partenaires/:id', checkACL, async (req, res) => {
     try {
       const result = await app.service('partenaires').find({
@@ -86,11 +99,36 @@ module.exports = function (app) {
     }
   });
 
+  app.get('/admin/partenaires/:id/delete', checkACL, async (req, res) => {
+    try {
+      const result = await app.service('partenaires').find({
+        query: { id: req.params.id },
+        sequelize: {
+          include: [{ model: app.services.offres.Model, as: 'offres' }],
+          raw: false,
+        },
+      });
+
+      if (result.total == 0) {
+        res.sendStatus(404);
+      }
+      const partenaire = result.data[0];
+      await app.service('partenaires').remove(partenaire.id);
+
+      res.redirect('/admin/partenaires?action=delete&success=true');
+    } catch (e) {
+      console.log(app.service('partenaires'))
+      res.sendStatus(404);
+    }
+  });
+
   app.get('/admin/partenaires', checkACL, async (req, res) => {
     const result = await app.service('partenaires').find();
     res.render('admin/partenaires', {
       partenaires: result,
       path: req.path,
+      action: req.query.action,
+      success: req.query.success === 'true',
     });
   });
 
@@ -172,7 +210,9 @@ module.exports = function (app) {
 
       const data = req.body;
       data.bonPlan = !!data.bonPlan;
-      const coordinates = data.location.split(',').map((num) => parseFloat(num));
+      const coordinates = data.location
+        .split(',')
+        .map((num) => parseFloat(num));
       data.echelle = parseInt(data.echelle);
       data.location = {
         crs: {
