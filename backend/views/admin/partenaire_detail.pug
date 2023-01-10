@@ -10,12 +10,11 @@ block content
 
     if partenaire != null
         h2 Partenaire #{partenaire.name}
+            if !editMode
+                <a class="fr-btn fr-btn--sm fr-btn--tertiary fr-ml-1w fr-btn--icon-left fr-icon-edit-box-line" href="/admin/partenaires/#{partenaire.id}/edit">Modifier</a>
+                <div><img width="100px" src="https://cellar-fr-north-hds-c1.services.clever-cloud.com/images-pej/prestataires/#{partenaire.id}.png" /></div>
     else
         h2 Création d'un nouveau partenaire
-
-    if !editMode
-        <a class="fr-btn fr-btn--sm fr-btn--tertiary fr-ml-1w fr-btn--icon-left fr-icon-edit-box-line" href="/admin/partenaires/#{partenaire.id}/edit">Modifier</a>
-        <div><img width="100px" src="https://cellar-fr-north-hds-c1.services.clever-cloud.com/images-pej/prestataires/#{partenaire.id}.png" /></div>
 
     if partenaire
         <form action="/admin/partenaires/#{partenaire.id}" method="POST">
