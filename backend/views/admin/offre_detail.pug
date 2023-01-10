@@ -31,7 +31,7 @@ block content
                       <label class="fr-label" for="input-partenaire">Partenaire</label>
                       <select class="fr-select" id="input-partenaire" name="partenaireId">
                           each partenaire in partenaires
-                              option(value=partenaire.id) #{partenaire.name}
+                              option(value=partenaire.id, selected= partenaireId && partenaire.id == partenaireId) #{partenaire.name}
                       </select>
                   </div>
             </div>

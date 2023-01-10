@@ -72,7 +72,7 @@ block content
         if partenaire.offres.length > 0
             <div class="fr-table">
                 <table>
-                    <caption>Liste des offres</caption>
+                    <caption class="fr-mb-2w">Liste des offres <a class="fr-btn fr-btn--sm fr-btn--tertiary fr-ml-1w fr-btn--icon-left fr-icon-add-circle-fill" href="/admin/offre/create?partenaireId=#{partenaire.id}">Créer une offre</a></caption>
                     <thead>
                         <tr>
                             <th scope="col">Titre</th><th scope="col">Type</th><th scope="col">Catégorie</th><th scope="col">Échelle</th><th scope="col">Localisation</th><th scope="col">Modalité d'utilisation</th><th scope="col">Bon plan</th>
@@ -97,4 +97,4 @@ block content
             </div>
         else 
             h3 Liste des offres
-            span Pas d'offres pour le moment
+            span Pas d'offres pour le moment  <a class="fr-btn fr-btn--sm fr-btn--tertiary fr-ml-1w fr-btn--icon-left fr-icon-add-circle-fill" href="/admin/offre/create?partenaireId=#{partenaire.id}">Créer la première offre</a>

@@ -32,7 +32,7 @@ module.exports = function (app) {
     res.render('admin/partenaire_detail', {
       partenaire: null,
       path: req.path,
-      editMode: true,
+      editMode: true
     });
   });
 
@@ -141,7 +141,8 @@ module.exports = function (app) {
       partenaire: null,
       path: req.path,
       editMode: true,
-      partenaires: partenaires.data
+      partenaires: partenaires.data,
+      partenaireId: req.query.partenaireId
     });
   });
 
