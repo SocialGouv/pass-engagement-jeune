@@ -1,3 +1,5 @@
+const Joi = require('joi');
+
 // Initializes the `admin` service on path `/admin`
 const { Admin } = require('./admin.class');
 const hooks = require('./admin.hooks');
@@ -32,7 +34,7 @@ module.exports = function (app) {
     res.render('admin/partenaire_detail', {
       partenaire: null,
       path: req.path,
-      editMode: true
+      editMode: true,
     });
   });
 
@@ -58,6 +60,7 @@ module.exports = function (app) {
         partenaire: result.data[0],
         path: req.path,
         editMode: false,
+        action: req.query.action,
         success: req.query.success === 'true',
       });
     } catch (e) {
@@ -97,7 +100,9 @@ module.exports = function (app) {
       const partenaire = result.data[0];
       await app.service('partenaires').patch(partenaire.id, req.body);
 
-      res.redirect(`/admin/partenaires/${partenaire.id}?success=true`);
+      res.redirect(
+        `/admin/partenaires/${partenaire.id}?success=true&action=update`
+      );
     } catch (e) {
       res.sendStatus(404);
     }
@@ -142,17 +147,36 @@ module.exports = function (app) {
       path: req.path,
       editMode: true,
       partenaires: partenaires.data,
-      partenaireId: req.query.partenaireId
+      partenaireId: req.query.partenaireId,
     });
   });
 
   app.post('/admin/offre', checkACL, async (req, res) => {
-    let offre= {};
+    let offre = {};
     offre = req.body;
+
+    // TODO : utils for validation
+    const schema = Joi.object({
+      title: Joi.string().min(3).max(200).required(),
+    }).options({ stripUnknown: true });
+
+    const validation = schema.validate(offre);
+    if (validation.error) {
+      const partenaires = await app.service('partenaires').find();
+      res.render('admin/offre_detail', {
+        error: true,
+        partenaire: null,
+        path: req.path,
+        editMode: true,
+        partenaires: partenaires.data,
+        partenaireId: req.query.partenaireId,
+      });
+      return;
+    }
 
     // TODO : utils for parsing
     offre.bonPlan = !!offre.bonPlan;
-    if(offre.location == '') {
+    if (offre.location == '') {
       delete offre.location;
     } else {
       const coordinates = offre.location
@@ -160,18 +184,18 @@ module.exports = function (app) {
         .map((num) => parseFloat(num));
       offre.echelle = parseInt(offre.echelle);
       offre.location =
-      offre.location != ''
-        ? null
-        : {
-          crs: {
-            type: 'name',
-            properties: {
-              name: 'EPSG:4326',
+        offre.location != ''
+          ? null
+          : {
+            crs: {
+              type: 'name',
+              properties: {
+                name: 'EPSG:4326',
+              },
             },
-          },
-          type: 'Point',
-          coordinates: coordinates,
-        };
+            type: 'Point',
+            coordinates: coordinates,
+          };
     }
     app.service('offres').create(offre);
     res.redirect('/admin/offres?action=create&success=true');
@@ -211,6 +235,7 @@ module.exports = function (app) {
         offre: result.data[0],
         path: req.path,
         editMode: false,
+        action: req.query.action,
         success: req.query.success === 'true',
         enumLabels,
       });
@@ -256,7 +281,7 @@ module.exports = function (app) {
       const offre = result.data[0];
       await app.service('offres').remove(offre.id);
 
-      res.redirect('/admin/offres?action=delete&success=true');
+      res.redirect('/admin/offres?action=delete&success=true&action=update');
     } catch (e) {
       res.sendStatus(404);
     }
@@ -266,34 +291,70 @@ module.exports = function (app) {
     try {
       const result = await app.service('offres').find({
         query: { id: req.params.id },
+        sequelize: {
+          include: [
+            { model: app.services.partenaires.Model, as: 'partenaire' },
+          ],
+          raw: false,
+        },
       });
-
       if (result.total == 0) {
         res.sendStatus(404);
       }
 
       const offre = result.data[0];
 
+      // TODO : utils for validation
+      const schema = Joi.object({
+        title: Joi.string().min(3).max(200).required(),
+      }).options({ stripUnknown: true });
+
+      const validation = schema.validate(req.body);
+
+      let error_fields = [];
+      if (validation.error) {
+        error_fields.push('title');
+      }
+
       const data = req.body;
       data.bonPlan = !!data.bonPlan;
-      const coordinates = data.location
-        .split(',')
-        .map((num) => parseFloat(num));
-      data.echelle = parseInt(data.echelle);
-      data.location = {
-        crs: {
-          type: 'name',
-          properties: {
-            name: 'EPSG:4326',
-          },
-        },
-        type: 'Point',
-        coordinates: coordinates,
-      };
+      try {
+        if (data.location == '') {
+          delete data.location;
+        } else {
+          const coordinates = data.location
+            .split(',')
+            .map((num) => parseFloat(num));
+          data.echelle = parseInt(data.echelle);
+          data.location = {
+            crs: {
+              type: 'name',
+              properties: {
+                name: 'EPSG:4326',
+              },
+            },
+            type: 'Point',
+            coordinates: coordinates,
+          };
+        }
 
-      await app.service('offres').patch(offre.id, data);
+        await app.service('offres').patch(offre.id, data);
+  
+      } catch(e) {
+        error_fields.push('location');
+      }
 
-      res.redirect(`/admin/offres/${offre.id}?success=true`);
+      if(error_fields.length > 0) {
+        res.render('admin/offre_detail', {
+          offre: result.data[0],
+          path: req.path,
+          editMode: true,
+          error: true,
+          error_fields
+        });
+      } else {
+        res.redirect(`/admin/offres/${offre.id}?success=true&action=update`);
+      }
     } catch (e) {
       res.sendStatus(404);
     }

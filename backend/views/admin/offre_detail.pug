@@ -2,11 +2,7 @@ extends ./layout.pug
 
 block content
 
-    if success
-      <div class="fr-alert fr-alert--success fr-alert--sm">
-          <h3 class="fr-alert__title">Mise à jour avec succès</h3>
-          <button class="fr-link--close fr-link" onclick="const alert = this.parentNode; alert.parentNode.removeChild(alert)">Masquer le message</button>
-      </div>
+    include components/flash.pug
 
     if offre
       h2 Offre #{offre.title}
@@ -35,16 +31,14 @@ block content
                       </select>
                   </div>
             </div>
-            <div class="fr-input-group">
+            div(class=error && error_fields.includes('title') ? "fr-input-group fr-input-group--error" : "fr-input-group")
                 <label class="fr-label" for="input-title-1">Titre</label>
                 if editMode
-                  if offre
-                    <input class="fr-input" spellcheck="true" name="title" id="input-title-1" type="text" value="#{offre.title}">
-                  else
-                    <input class="fr-input" spellcheck="true" name="title" id="input-title-1" type="text">
+                    input(class=error && error_fields.includes('title') ? "fr-input fr-input--error" : "fr-input" spellcheck="true" name="title" id="input-title-1" type="text" value=offre ? offre.title : '')
+                    if error && error_fields.includes('title')
+                        <p id="text-input-error-desc-error" class="fr-error-text">Le titre doit comporter entre 3 et 200 caractères.</p>
                 else
                     <span class="fr-text--sm">#{offre.title}</span>
-            </div>
             <div class="fr-input-group">
                 if editMode
                     <div class="fr-select-group">
@@ -85,19 +79,18 @@ block content
                     <span class="fr-text--sm">#{formatEnum('echelle',offre.echelle)}</span>
             </div>
 
-            <div class="fr-input-group">
+            div(class=error && error_fields.includes('location') ? "fr-input-group fr-input-group--error" : "fr-input-group")
                 <label class="fr-label" for="input-location-1">Localisation</label>
                 if editMode
-                  if offre && offre.location
-                    <input class="fr-input" spellcheck="true" name="location" id="input-location-1" type="text" value="#{offre.location.coordinates[0]},#{offre.location.coordinates[1]}" />
-                  else
-                    <input class="fr-input" spellcheck="true" name="location" id="input-location-1" type="text" />
+                  if offre
+                    input(class=error && error_fields.includes('location') ? "fr-input fr-input--error" : "fr-input" spellcheck="false" name="location" id="input-location-1" type="text" value=offre && offre.location ? `${offre.location.coordinates[0]}},${offre.location.coordinates[1]}` : '')
+                    if error && error_fields.includes('location')
+                        <p id="text-input-error-desc-error" class="fr-error-text">La localisation doit être au format: lat,lng</p>
                 else
                 if offre && offre.location
                   <script src="http://www.openlayers.org/api/OpenLayers.js"></script>
                       <script>document.addEventListener("DOMContentLoaded", function(event) { map = new OpenLayers.Map("mapdiv");map.addLayer(new OpenLayers.Layer.OSM());var lonLat = new OpenLayers.LonLat(#{offre.location.coordinates[1]}, #{offre.location.coordinates[0]}).transform(new OpenLayers.Projection("EPSG:4326"),map.getProjectionObject());var zoom=6;var markers = new OpenLayers.Layer.Markers( "Markers" ); map.addLayer(markers);markers.addMarker(new OpenLayers.Marker(lonLat));map.setCenter (lonLat, zoom);});</script>
                       <div id="mapdiv" style="width:400px; height:400px;"></div>
-            </div>
             <div class="fr-input-group">
 
                 if editMode

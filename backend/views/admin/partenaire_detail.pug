@@ -2,11 +2,7 @@ extends ./layout.pug
 
 block content
 
-    if success
-        <div class="fr-alert fr-alert--success fr-alert--sm">
-            <h3 class="fr-alert__title">Mise à jour avec succès</h3>
-            <button class="fr-link--close fr-link" onclick="const alert = this.parentNode; alert.parentNode.removeChild(alert)">Masquer le message</button>
-        </div>
+    include components/flash.pug
 
     if partenaire != null
         h2 Partenaire #{partenaire.name}
