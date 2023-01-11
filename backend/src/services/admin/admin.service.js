@@ -39,6 +39,28 @@ module.exports = function (app) {
   });
 
   app.post('/admin/partenaire', checkACL, async (req, res) => {
+    // TODO : utils for validation
+    const schema = Joi.object({
+      name: Joi.string().min(3).max(200).required(),
+      description: Joi.string().min(0).max(2000),
+    }).options({ abortEarly: false, stripUnknown: true });
+
+    const validation = schema.validate(req.body);
+
+    let error_fields = [];
+    if (validation.error) {
+      error_fields = validation.error.details.map(e => e.context.key);
+
+      res.render('admin/partenaire_detail', {
+        partenaire: null,
+        path: req.path,
+        editMode: true,
+        error: true,
+        error_fields,
+      });
+      return;
+    }
+
     app.service('partenaires').create(req.body);
     res.redirect('/admin/partenaires?action=create&success=true');
   });
@@ -95,6 +117,28 @@ module.exports = function (app) {
 
       if (result.total == 0) {
         res.sendStatus(404);
+      }
+
+      // TODO : utils for validation
+      const schema = Joi.object({
+        name: Joi.string().min(3).max(200).required(),
+        description: Joi.string().min(0).max(2000),
+      }).options({ abortEarly: false, stripUnknown: true });
+
+      const validation = schema.validate(req.body);
+
+      let error_fields = [];
+      if (validation.error) {
+        error_fields = validation.error.details.map(e => e.context.key);
+
+        res.render('admin/partenaire_detail', {
+          partenaire: result.data[0],
+          path: req.path,
+          editMode: true,
+          error: true,
+          error_fields,
+        });
+        return;
       }
 
       const partenaire = result.data[0];
@@ -161,17 +205,10 @@ module.exports = function (app) {
     }).options({ stripUnknown: true });
 
     const validation = schema.validate(offre);
+
+    let error_fields = [];
     if (validation.error) {
-      const partenaires = await app.service('partenaires').find();
-      res.render('admin/offre_detail', {
-        error: true,
-        partenaire: null,
-        path: req.path,
-        editMode: true,
-        partenaires: partenaires.data,
-        partenaireId: req.query.partenaireId,
-      });
-      return;
+      error_fields.push('title');
     }
 
     // TODO : utils for parsing
@@ -179,26 +216,43 @@ module.exports = function (app) {
     if (offre.location == '') {
       delete offre.location;
     } else {
-      const coordinates = offre.location
-        .split(',')
-        .map((num) => parseFloat(num));
-      offre.echelle = parseInt(offre.echelle);
-      offre.location =
-        offre.location != ''
-          ? null
-          : {
-            crs: {
-              type: 'name',
-              properties: {
-                name: 'EPSG:4326',
+      try {
+        const coordinates = offre.location
+          .split(',')
+          .map((num) => parseFloat(num));
+        offre.echelle = parseInt(offre.echelle);
+        offre.location =
+          offre.location != ''
+            ? null
+            : {
+              crs: {
+                type: 'name',
+                properties: {
+                  name: 'EPSG:4326',
+                },
               },
-            },
-            type: 'Point',
-            coordinates: coordinates,
-          };
+              type: 'Point',
+              coordinates: coordinates,
+            };
+      } catch (e) {
+        error_fields.push('location');
+      }
     }
-    app.service('offres').create(offre);
-    res.redirect('/admin/offres?action=create&success=true');
+
+    if (error_fields.length > 0) {
+      const partenaires = await app.service('partenaires').find();
+      res.render('admin/offre_detail', {
+        offre: null,
+        path: req.path,
+        partenaires: partenaires.data,
+        editMode: true,
+        error: true,
+        error_fields,
+      });
+    } else {
+      app.service('offres').create(offre);
+      res.redirect('/admin/offres?action=create&success=true');
+    }
   });
 
   app.get('/admin/offres', checkACL, async (req, res) => {
@@ -337,22 +391,20 @@ module.exports = function (app) {
             coordinates: coordinates,
           };
         }
-
-        await app.service('offres').patch(offre.id, data);
-  
-      } catch(e) {
+      } catch (e) {
         error_fields.push('location');
       }
 
-      if(error_fields.length > 0) {
+      if (error_fields.length > 0) {
         res.render('admin/offre_detail', {
           offre: result.data[0],
           path: req.path,
           editMode: true,
           error: true,
-          error_fields
+          error_fields,
         });
       } else {
+        await app.service('offres').patch(offre.id, data);
         res.redirect(`/admin/offres/${offre.id}?success=true&action=update`);
       }
     } catch (e) {

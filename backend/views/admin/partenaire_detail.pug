@@ -18,27 +18,28 @@ block content
         <form action="/admin/partenaire" method="POST">
     <fieldset class="fr-fieldset fr-mt-2w" aria-label="Partenaire" aria-describedby="name-1-fieldset-messages">
         <div class="fr-fieldset__element">
-            <div class="fr-input-group">
+            div(class=error && error_fields.includes('name') ? "fr-input-group fr-input-group--error" : "fr-input-group")
                 <label class="fr-label" for="input-name-1">Nom</label>
                 if editMode
-                    <input class="fr-input" spellcheck="false" name="name" id="input-name-1" type="text" value="#{partenaire != null ? partenaire.name : ''}">
+                    input(class=error && error_fields.includes('name') ? "fr-input fr-input--error" : "fr-input" spellcheck="false" name="name" id="input-name-1" type="text" value=partenaire != null ? partenaire.name : '')
+                    if error && error_fields.includes('name')
+                        <p id="text-input-error-desc-error" class="fr-error-text">Le nom doit comporter entre 3 et 200 caractères.</p>
                 else
                     <span class="fr-text--sm">#{partenaire.name}</span>
-            </div>
-            <div class="fr-input-group">
+            div(class=error && error_fields.includes('description') ? "fr-input-group fr-input-group--error" : "fr-input-group")
                 <label class="fr-label" for="input-description-1">Description</label>
                 if editMode
-                    <textarea class="fr-input" spellcheck="true" name="description" id="input-description-1" type="text">#{partenaire != null ? partenaire.description : ''}</textarea>
+                    textarea(class=error && error_fields.includes('name') ? "fr-input fr-input--error" : "fr-input" spellcheck="true" name="description" id="input-description-1" type="text" value=partenaire != null ? partenaire.description : '')
+                    if error && error_fields.includes('description')
+                        <p id="text-input-error-desc-error" class="fr-error-text">La description doit comporter moins de 2000 caractères.</p>
                 else
                     <p class="fr-text--sm">#{partenaire.description}</p>
-            </div>
-            <div class="fr-input-group">
+            div(class="fr-input-group")
                 <label class="fr-label" for="input-url-1">Lien</label>
                 if editMode
                     <input class="fr-input" spellcheck="true" name="url" id="input-url-1" type="text" value="#{partenaire != null ? partenaire.url : ''}" />
                 else
                     <p class="fr-text--sm">#{partenaire.url}</p>
-            </div>
         </div>
     </fieldset>
 

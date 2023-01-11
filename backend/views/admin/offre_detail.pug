@@ -82,7 +82,6 @@ block content
             div(class=error && error_fields.includes('location') ? "fr-input-group fr-input-group--error" : "fr-input-group")
                 <label class="fr-label" for="input-location-1">Localisation</label>
                 if editMode
-                  if offre
                     input(class=error && error_fields.includes('location') ? "fr-input fr-input--error" : "fr-input" spellcheck="false" name="location" id="input-location-1" type="text" value=offre && offre.location ? `${offre.location.coordinates[0]}},${offre.location.coordinates[1]}` : '')
                     if error && error_fields.includes('location')
                         <p id="text-input-error-desc-error" class="fr-error-text">La localisation doit être au format: lat,lng</p>
