@@ -11,7 +11,7 @@ block content
     if offre
       h2 Offre #{offre.title}
     else
-      h2 Création d'un nouveau partenaire
+      h2 Création d'une nouvelle offre
 
     if !editMode
         <a class="fr-btn fr-btn--sm fr-btn--tertiary fr-ml-1w fr-btn--icon-left fr-icon-edit-box-line" href="/admin/offres/#{offre.id}/edit">Modifier</a>
@@ -134,11 +134,41 @@ block content
                   if offre
                     <input type="submit" class="fr-btn" value="Mettre à jour" />
                   else
-                    <input type="submit" class="fr-btn" value="Créer le partenaire" />
+                    <input type="submit" class="fr-btn" value="Créer l'offre" />
                 </li>
                 if offre
                   <li>
-                      <a class="fr-btn fr-btn--secondary" href="/admin/offres/#{offre.id}/delete">Supprimer</a>
+                    <button type="button" class="fr-btn" data-fr-opened="false" aria-controls="fr-modal-2">Supprimer</button>
+
+                    <dialog aria-labelledby="fr-modal-2-title" id="fr-modal-2" class="fr-modal" role="dialog" >
+                        <div class="fr-container fr-container--fluid fr-container-md">
+                            <div class="fr-grid-row fr-grid-row--center">
+                                <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                                    <div class="fr-modal__body">
+                                        <div class="fr-modal__header">
+                                            <button type="button" type="button" class="fr-link--close fr-link" aria-controls="fr-modal-2">Fermer</button>
+                                        </div>
+                                        <div class="fr-modal__content">
+                                            <h1 id="fr-modal-2-title" class="fr-modal__title">
+                                                <span class="fr-fi-arrow-right-line fr-fi--lg"></span> Suppression de l'offre
+                                            </h1>
+                                            <p>Vous êtes sur le point de supprimer l'offre. Cette action est irréversible.</p>
+                                        </div>
+                                        <div class="fr-modal__footer">
+                                            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
+                                                <li>
+                                                    <button type="button" type="button" class="fr-btn fr-btn--primary" aria-controls="fr-modal-2">Annuler</button>
+                                                </li>
+                                                <li>
+                                                    <a class="fr-btn fr-btn--secondary" href="/admin/offres/#{offre.id}/delete">Supprimer</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </dialog>
                   </li>
                 <li>
                   if offre
