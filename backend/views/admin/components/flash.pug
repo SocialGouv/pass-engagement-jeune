@@ -1,8 +1,14 @@
 if success
-  <div class="fr-alert fr-alert--success fr-alert--sm">
+  <div class="fr-alert fr-alert--success fr-alert--sm fr-mb-2w" id="flash">
       if action == 'create'
         <h3 class="fr-alert__title">Création avec succès</h3>
       else if action == 'delete'
         <h3 class="fr-alert__title">Suppression avec succès</h3>
-      <button class="fr-link--close fr-link" onclick="const alert = this.parentNode; alert.parentNode.removeChild(alert)">Masquer le message</button>
   </div>
+
+script.
+  setTimeout(() => {
+    const flash = document.getElementById('flash');
+    flash.parentElement.removeChild(flash);
+  }, 3000);
+script
