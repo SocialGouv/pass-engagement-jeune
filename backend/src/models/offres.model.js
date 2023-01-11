@@ -72,7 +72,11 @@ module.exports = function (app) {
   offres.associate = function (models) {
     // Define associations here
     // See https://sequelize.org/master/manual/assocs.html
-    offres.belongsTo(models.partenaires);
+    offres.belongsTo(models.partenaires, {
+      allowNull: true,
+      foreignKeyConstraint: true,
+      onDelete: 'cascade',
+    });
   };
 
   return offres;

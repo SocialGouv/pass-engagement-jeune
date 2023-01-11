@@ -1,0 +1,21 @@
+if success
+  <div class="fr-alert fr-alert--success fr-alert--sm fr-mb-2w" id="flash">
+      if action == 'create'
+        <h3 class="fr-alert__title">Création avec succès</h3>
+      else if action == 'delete'
+        <h3 class="fr-alert__title">Suppression avec succès</h3>
+      else if action == 'update'
+        <h3 class="fr-alert__title">Mise à jour avec succès</h3>
+  </div>
+
+if error
+  <div class="fr-alert fr-alert--error fr-alert--sm fr-mb-2w" id="flash">
+    <h3 class="fr-alert__title">Erreur : formulaire incorrect</h3>
+  </div>
+
+script.
+  setTimeout(() => {
+    const flash = document.getElementById('flash');
+    flash.parentElement.removeChild(flash);
+  }, 5000);
+script

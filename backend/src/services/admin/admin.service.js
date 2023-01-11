@@ -1,3 +1,5 @@
+const Joi = require('joi');
+
 // Initializes the `admin` service on path `/admin`
 const { Admin } = require('./admin.class');
 const hooks = require('./admin.hooks');
@@ -24,6 +26,45 @@ module.exports = function (app) {
     res.redirect('admin/partenaires');
   });
 
+  /*
+   * Gestion des partenaires
+   */
+
+  app.get('/admin/partenaire/create', checkACL, async (req, res) => {
+    res.render('admin/partenaire_detail', {
+      partenaire: null,
+      path: req.path,
+      editMode: true,
+    });
+  });
+
+  app.post('/admin/partenaire', checkACL, async (req, res) => {
+    // TODO : utils for validation
+    const schema = Joi.object({
+      name: Joi.string().min(3).max(200).required(),
+      description: Joi.string().min(0).max(2000),
+    }).options({ abortEarly: false, stripUnknown: true });
+
+    const validation = schema.validate(req.body);
+
+    let error_fields = [];
+    if (validation.error) {
+      error_fields = validation.error.details.map(e => e.context.key);
+
+      res.render('admin/partenaire_detail', {
+        partenaire: null,
+        path: req.path,
+        editMode: true,
+        error: true,
+        error_fields,
+      });
+      return;
+    }
+
+    app.service('partenaires').create(req.body);
+    res.redirect('/admin/partenaires?action=create&success=true');
+  });
+
   app.get('/admin/partenaires/:id', checkACL, async (req, res) => {
     try {
       const result = await app.service('partenaires').find({
@@ -41,6 +82,7 @@ module.exports = function (app) {
         partenaire: result.data[0],
         path: req.path,
         editMode: false,
+        action: req.query.action,
         success: req.query.success === 'true',
       });
     } catch (e) {
@@ -77,10 +119,52 @@ module.exports = function (app) {
         res.sendStatus(404);
       }
 
+      // TODO : utils for validation
+      const schema = Joi.object({
+        name: Joi.string().min(3).max(200).required(),
+        description: Joi.string().min(0).max(2000),
+      }).options({ abortEarly: false, stripUnknown: true });
+
+      const validation = schema.validate(req.body);
+
+      let error_fields = [];
+      if (validation.error) {
+        error_fields = validation.error.details.map(e => e.context.key);
+
+        res.render('admin/partenaire_detail', {
+          partenaire: result.data[0],
+          path: req.path,
+          editMode: true,
+          error: true,
+          error_fields,
+        });
+        return;
+      }
+
       const partenaire = result.data[0];
       await app.service('partenaires').patch(partenaire.id, req.body);
 
-      res.redirect(`/admin/partenaires/${partenaire.id}?success=true`);
+      res.redirect(
+        `/admin/partenaires/${partenaire.id}?success=true&action=update`
+      );
+    } catch (e) {
+      res.sendStatus(404);
+    }
+  });
+
+  app.get('/admin/partenaires/:id/delete', checkACL, async (req, res) => {
+    try {
+      const result = await app.service('partenaires').find({
+        query: { id: req.params.id },
+      });
+
+      if (result.total == 0) {
+        res.sendStatus(404);
+      }
+      const partenaire = result.data[0];
+      await app.service('partenaires').remove(partenaire.id);
+
+      res.redirect('/admin/partenaires?action=delete&success=true');
     } catch (e) {
       res.sendStatus(404);
     }
@@ -91,7 +175,84 @@ module.exports = function (app) {
     res.render('admin/partenaires', {
       partenaires: result,
       path: req.path,
+      action: req.query.action,
+      success: req.query.success === 'true',
     });
+  });
+
+  /*
+   * Gestion des offres
+   */
+
+  app.get('/admin/offre/create', checkACL, async (req, res) => {
+    const partenaires = await app.service('partenaires').find();
+    res.render('admin/offre_detail', {
+      partenaire: null,
+      path: req.path,
+      editMode: true,
+      partenaires: partenaires.data,
+      partenaireId: req.query.partenaireId,
+    });
+  });
+
+  app.post('/admin/offre', checkACL, async (req, res) => {
+    let offre = {};
+    offre = req.body;
+
+    // TODO : utils for validation
+    const schema = Joi.object({
+      title: Joi.string().min(3).max(200).required(),
+    }).options({ stripUnknown: true });
+
+    const validation = schema.validate(offre);
+
+    let error_fields = [];
+    if (validation.error) {
+      error_fields.push('title');
+    }
+
+    // TODO : utils for parsing
+    offre.bonPlan = !!offre.bonPlan;
+    if (offre.location == '') {
+      delete offre.location;
+    } else {
+      try {
+        const coordinates = offre.location
+          .split(',')
+          .map((num) => parseFloat(num));
+        offre.echelle = parseInt(offre.echelle);
+        offre.location =
+          offre.location != ''
+            ? null
+            : {
+              crs: {
+                type: 'name',
+                properties: {
+                  name: 'EPSG:4326',
+                },
+              },
+              type: 'Point',
+              coordinates: coordinates,
+            };
+      } catch (e) {
+        error_fields.push('location');
+      }
+    }
+
+    if (error_fields.length > 0) {
+      const partenaires = await app.service('partenaires').find();
+      res.render('admin/offre_detail', {
+        offre: null,
+        path: req.path,
+        partenaires: partenaires.data,
+        editMode: true,
+        error: true,
+        error_fields,
+      });
+    } else {
+      app.service('offres').create(offre);
+      res.redirect('/admin/offres?action=create&success=true');
+    }
   });
 
   app.get('/admin/offres', checkACL, async (req, res) => {
@@ -101,7 +262,12 @@ module.exports = function (app) {
         raw: false,
       },
     });
-    res.render('admin/offres', { items: result, path: req.path });
+    res.render('admin/offres', {
+      items: result,
+      path: req.path,
+      action: req.query.action,
+      success: req.query.success === 'true',
+    });
   });
 
   app.get('/admin/offres/:id', checkACL, async (req, res) => {
@@ -123,6 +289,7 @@ module.exports = function (app) {
         offre: result.data[0],
         path: req.path,
         editMode: false,
+        action: req.query.action,
         success: req.query.success === 'true',
         enumLabels,
       });
@@ -156,40 +323,91 @@ module.exports = function (app) {
     }
   });
 
-  app.post('/admin/offres/:id', checkACL, async (req, res) => {
+  app.get('/admin/offres/:id/delete', checkACL, async (req, res) => {
     try {
       const result = await app.service('offres').find({
         query: { id: req.params.id },
       });
 
-      console.log(result);
+      if (result.total == 0) {
+        res.sendStatus(404);
+      }
+      const offre = result.data[0];
+      await app.service('offres').remove(offre.id);
 
+      res.redirect('/admin/offres?action=delete&success=true&action=update');
+    } catch (e) {
+      res.sendStatus(404);
+    }
+  });
+
+  app.post('/admin/offres/:id', checkACL, async (req, res) => {
+    try {
+      const result = await app.service('offres').find({
+        query: { id: req.params.id },
+        sequelize: {
+          include: [
+            { model: app.services.partenaires.Model, as: 'partenaire' },
+          ],
+          raw: false,
+        },
+      });
       if (result.total == 0) {
         res.sendStatus(404);
       }
 
       const offre = result.data[0];
 
+      // TODO : utils for validation
+      const schema = Joi.object({
+        title: Joi.string().min(3).max(200).required(),
+      }).options({ stripUnknown: true });
+
+      const validation = schema.validate(req.body);
+
+      let error_fields = [];
+      if (validation.error) {
+        error_fields.push('title');
+      }
+
       const data = req.body;
       data.bonPlan = !!data.bonPlan;
-      const coordinates = data.location.split(',').map((num) => parseFloat(num));
-      data.echelle = parseInt(data.echelle);
-      data.location = {
-        crs: {
-          type: 'name',
-          properties: {
-            name: 'EPSG:4326',
-          },
-        },
-        type: 'Point',
-        coordinates: coordinates,
-      };
+      try {
+        if (data.location == '') {
+          delete data.location;
+        } else {
+          const coordinates = data.location
+            .split(',')
+            .map((num) => parseFloat(num));
+          data.echelle = parseInt(data.echelle);
+          data.location = {
+            crs: {
+              type: 'name',
+              properties: {
+                name: 'EPSG:4326',
+              },
+            },
+            type: 'Point',
+            coordinates: coordinates,
+          };
+        }
+      } catch (e) {
+        error_fields.push('location');
+      }
 
-      await app.service('offres').patch(offre.id, data);
-
-      res.redirect(`/admin/offres/${offre.id}?success=true`);
+      if (error_fields.length > 0) {
+        res.render('admin/offre_detail', {
+          offre: result.data[0],
+          path: req.path,
+          editMode: true,
+          error: true,
+          error_fields,
+        });
+      } else {
+        await app.service('offres').patch(offre.id, data);
+        res.redirect(`/admin/offres/${offre.id}?success=true&action=update`);
+      }
     } catch (e) {
-      console.log(e);
       res.sendStatus(404);
     }
   });

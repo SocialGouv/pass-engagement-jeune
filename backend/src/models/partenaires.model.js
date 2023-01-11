@@ -39,7 +39,7 @@ module.exports = function (app) {
   partenaires.associate = function (models) {
     // Define associations here
     // See https://sequelize.org/master/manual/assocs.html
-    partenaires.hasMany(models.offres);
+    partenaires.hasMany(models.offres, { onDelete: 'cascade' });
   };
 
   return partenaires;

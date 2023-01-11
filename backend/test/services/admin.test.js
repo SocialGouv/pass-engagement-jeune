@@ -42,7 +42,7 @@ describe('\'admin\' service', () => {
     );
 
     assert.ok(
-      response.data.indexOf('<caption>Liste des partenaires</caption>') !== -1
+      response.data.indexOf('<caption class="fr-mb-2w">Liste des partenaires <a class="fr-btn fr-btn--sm fr-btn--tertiary fr-ml-1w fr-btn--icon-left fr-icon-add-circle-fill" href="/admin/partenaire/create">Créer un partenaire</a></caption>') !== -1
     );
 
     const partenaires = await app.service('partenaires').find();
@@ -70,7 +70,7 @@ describe('\'admin\' service', () => {
     );
 
     assert.ok(
-      response.data.indexOf('<caption>Liste des offres</caption>') !== -1
+      response.data.indexOf('<caption class="fr-mb-2w">Liste des offres <a class="fr-btn fr-btn--sm fr-btn--tertiary fr-ml-1w fr-btn--icon-left fr-icon-add-circle-fill" href="/admin/offre/create">Créer une offre</a></caption>') !== -1
     );
 
     const offres = await app.service('offres').find();

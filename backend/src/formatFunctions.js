@@ -10,6 +10,11 @@ const enumLabels = {
     2: 'Départementale',
     3: 'Communauté de commune',
   },
+  type: {
+    PEJ: 'PEJ',
+    SOLIDAIRE: 'Solidaire',
+    JEUNE: 'Jeune'
+  },
   categories: {
     ALIMENTATION_HYGIENE: 'Alimentation / Hygiène',
     SOINS_SANTE: 'Soins / Santé',
